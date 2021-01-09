@@ -15,20 +15,20 @@ const Main = () => {
   const navbar = useRef();
   const [intro, setIntro] = useState(true);
   const [boardInfo, setBoardInfo] = useState({
-    type: 'none',
+    type: 'ppt',
     index: {
-      rendering: [0, 1],
+      rendering: [0, 5],
       writing: 0,
       user: 0,
       admin: 0,
       current: 'user',
     },
     urls: [
-      // 'https://picsum.photos/500/600?random=0',
-      // 'https://picsum.photos/500/600?random=1',
-      // 'https://picsum.photos/500/600?random=2',
-      // 'https://picsum.photos/500/600?random=3',
-      // 'https://picsum.photos/500/600?random=4',
+      'https://picsum.photos/500/600?random=0',
+      'https://picsum.photos/500/600?random=1',
+      'https://picsum.photos/500/600?random=2',
+      'https://picsum.photos/500/600?random=3',
+      'https://picsum.photos/500/600?random=4',
     ],
   });
   React.useEffect(() => {
@@ -132,7 +132,7 @@ const Main = () => {
             </PopUp>
           </div>
         )}
-        {!intro && loadState === 'complete' ? 
+        {!intro && loadState === 'complete' || boardInfo.type !== 'none' ? 
           <RightNav
             penInfo={penInfo}
             setPenInfo={setPenInfo}

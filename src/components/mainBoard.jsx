@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { SVGDrawings } from 'src/components/svgDrawing/svg';
 
@@ -7,6 +8,17 @@ const MainBoard = ({ boardInfo, penInfo }) => {
   const board = useRef();
   const drawingRef = useRef();
 
+  const router = useRouter();
+  const { boardID } = router.query;
+
+  const parseCookie = (str) => str
+    .split(';')
+    .map((v) => v.split('='))
+    .reduce((acc, v) => {
+      acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(v[1].trim());
+      return acc;
+    }, {});
+
   useEffect(() => {
     if (drawingRef.current) return;
     if (!board.current) return;
@@ -14,7 +26,10 @@ const MainBoard = ({ boardInfo, penInfo }) => {
       drawingRef.current = new SVGDrawings(board.current, boardInfo.urls.length * 2, {
         rendering: boardInfo.index.rendering,
         writing: boardInfo.index.writing,
-      }, penInfo);
+      }, penInfo, {
+        boardURL: boardID,
+        sessionID: document.cookie ? parseCookie(document.cookie).sessionid : '',
+      });
     } else {
       drawingRef.current = new SVGDrawings(board.current, 2, {
         rendering: boardInfo.index.rendering,
@@ -26,11 +41,11 @@ const MainBoard = ({ boardInfo, penInfo }) => {
     }
   });
   useEffect(() => {
-    // console.log(boardInfo.index);
+    console.log(boardInfo.index);
     if (boardInfo && boardInfo.index) {
       drawingRef.current.setRenderingIndex(boardInfo.index.rendering);
       drawingRef.current.setWritingIndex(boardInfo.index.writing);
-      // drawingRef.current.getIndex();
+      drawingRef.current.getIndex();
     }
   }, [boardInfo]);
   useEffect(() => {

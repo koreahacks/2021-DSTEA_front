@@ -105,14 +105,13 @@ const layerChoice = ({ boardInfo, setBoardInfo }) => {
     });
   };
   const toggleWrite = (index) => {
-    const writing = boardInfo.index.writing === index ? null : index;
-    let { rendering } = boardInfo.index;
-    if (writing !== index && rendering.includes(index)) {
-      rendering = rendering.filter((i) => i !== index);
-    } else {
-      rendering.push(index);
+    const writing = index;
+    const { rendering } = boardInfo.index;
+    if (writing !== null) {
+      if (!rendering.includes(writing)) {
+        rendering.push(writing);
+      }
     }
-
     setBoardInfo({
       ...boardInfo,
       index: {
@@ -149,7 +148,7 @@ const layerChoice = ({ boardInfo, setBoardInfo }) => {
             writeIndex={boardInfo.index.writing}
             index={boardIndex + indexLength}
             text="Public"
-            onClick={() => { toggleIndex('write', boardIndex + indexLength); }}
+            onClick={() => { toggleIndex('write', boardInfo.index.writing === boardIndex + indexLength ? null : boardIndex + indexLength); }}
           />
           <ToggleSwitch index={boardIndex + indexLength} onClick={() => { toggleIndex('render', boardIndex + indexLength); }} />
         </RowWrapper>
@@ -158,7 +157,7 @@ const layerChoice = ({ boardInfo, setBoardInfo }) => {
             writeIndex={boardInfo.index.writing}
             index={boardIndex}
             text="Private"
-            onClick={() => { toggleIndex('write', boardIndex); }}
+            onClick={() => { toggleIndex('write', boardInfo.index.writing === boardIndex ? null : boardIndex); }}
           />
           <ToggleSwitch index={boardIndex} onClick={() => { toggleIndex('render', boardIndex); }} />
         </RowWrapper>

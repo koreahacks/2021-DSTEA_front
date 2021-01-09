@@ -125,6 +125,7 @@ class Render extends SVG {
   }
   delete() {
     const target = this.parent.getElementById(this.id);
+    console.log(target);
     if (target) {
       target.remove();
     }
@@ -315,8 +316,6 @@ export class SVGDrawings {
   setRenderingIndex(index) {
     const deleteIndex = this.renderingIndexs; // .filter((i) => !index.includes(i));
     const createIndex = index; // .filter((i) => !this.renderingIndexs.includes(i))
-    console.log(deleteIndex);
-    console.log(createIndex);
     deleteIndex.forEach((i) => {
       this.SVGs[i].delete();
     });
@@ -328,10 +327,9 @@ export class SVGDrawings {
   setWritingIndex(index) {
     if (this.writingIndex === index) return;
     if (this.writingIndex !== null) {
-        this.SVGs[this.writingIndex].off();
+      this.SVGs[this.writingIndex].off();
     }
     this.writingIndex = index;
-
     if (index !== null) {
       this.SVGs[index].delete();
       this.SVGs[index].create();
