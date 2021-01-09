@@ -101,15 +101,32 @@ class SVG {
   }
 }
 
+class Sender {
+  constructor({boardID, sessionID}) {
+    this.baseURL = 'http://49.50.167.155:8001';
+    this.current = {
+      write: new WebSocket(`${this.baseURL}/${boardID}/${sessionID}`),
+      delete: new WebSocket(`${this.baseURL}/delete/`),
+    };
+  }
+  write(data) {
+    this.current.write.write(JSON.stringify(data));
+  }
+  setEvent(type, callbackName, callback) {
+    this.current[type][callbackName] = callback;
+  }
+}
+
 class Render extends SVG {
-  constructor(parent, id, opt = {}) {
-    const { width, height, left, top } = parent.getBoundingClientRect()
+  constructor(parent, id, opt = {}, socketOpt = {}) {
+    const { width, height, left, top } = parent.getBoundingClientRect();
     super({ width, height, ...opt });
     this.id = id;
     this.parent = parent;
     this.left = left;
     this.top = top;
     // parent.appendChild(this.toPaths(this.id));
+    this.sender = new Sender(socketOpt);
   }
   update() {
     console.log('update', this.id);
@@ -134,8 +151,8 @@ class Render extends SVG {
 }
 
 export class SVGDrawing extends Render {
-  constructor(parent, id, opt = {}) {
-    super(parent, id, opt);
+  constructor(parent, id, opt = {}, socketOpt = {}) {
+    super(parent, id, opt, socketOpt);
     this.parent = parent;
 
     this.handleStart = this.handleStart.bind(this);
@@ -202,13 +219,13 @@ export class SVGDrawing extends Render {
 }
 
 export class SVGDrawings {
-  constructor(parent, maxIndex, currIndexs = {'rendering': [0], 'writing': 0}, opt = {}) {
+  constructor(parent, maxIndex, currIndexs = {'rendering': [0], 'writing': 0}, opt = {}, socketOpt = {boardURL: '', sessionID: ''}) {
     this.renderingIndexs = currIndexs['rendering'];
     this.writingIndex = currIndexs['writing'];
     this.maxIndex = maxIndex;
     this.SVGs = [];
     for (let i = 0; i < this.maxIndex; i += 1) {
-      this.SVGs.push(new SVGDrawing(parent, `index_${i}`, opt));
+      this.SVGs.push(new SVGDrawing(parent, `index_${i}`, opt, socketOpt));
     }
 
     this.renderingIndexs.forEach((i) => {
