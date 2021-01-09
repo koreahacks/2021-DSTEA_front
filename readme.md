@@ -22,7 +22,7 @@ npm run dev
     * pages: 라우팅될 파일입니다.
 * public: img, svg 파일을 담고 있습니다.
     * public 폴더에 있는 이미지는 img tag에서 src로 불러올때 `src={'/icon.svg'}`와 같이 불러올 수 있습니다  
-**예시**
+### **예시**
 ```
 src
 |- style

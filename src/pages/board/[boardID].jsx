@@ -19,7 +19,28 @@ const Main = () => {
 };
 
 const Layout = styled.div`
-
+  section {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100vh;
+    .main-wrapper {
+      margin-left: 11px;
+      position: relative;
+      height: 100%;
+      width: auto;
+      background-color: white;
+      flex-grow: 1;
+    }
+    img {
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -o-user-select: none;
+      user-select: none;
+    }
+  }
 `;
 
 export default Main;
