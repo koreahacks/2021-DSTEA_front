@@ -57,7 +57,7 @@ const Container = styled.button`
 `;
 
 const AuthReqPopUp = ({ nickname, id }) => {
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const onClick = (text) => {
     // request something
     setVisible(false);
@@ -78,7 +78,7 @@ const Button = ({ isAuthorized, onClick, text }) => <Container isAuthorized={isA
 const AuthReqButton = ({ isAuthorized, onClick, text }) => <Button isAuthorized={isAuthorized} onClick={onClick} text={text} />;
 
 const AuthWindow = () => {
-  const [isAdmin, setIsAdmin] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(undefined);
   const [authReqUser, setAuthReqUser] = useState({
     users: [
