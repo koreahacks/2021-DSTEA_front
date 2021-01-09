@@ -15,12 +15,11 @@ const MainBoard = ({ boardInfo, penInfo }) => {
         writing: boardInfo.index.writing,
       }, penInfo);
     } else {
-      drawingRef.current = new SVGDrawing(board.current, penInfo);
-      drawingRef.current.on();
+      // drawingRef.current = new SVGDrawing(board.current, penInfo);
+      // drawingRef.current.on();
     }
   });
   useEffect(() => {
-    console.log(boardInfo.index);
     if (boardInfo && boardInfo.index) {
       drawingRef.current.setRenderingIndex(boardInfo.index.rendering);
       drawingRef.current.setWritingIndex(boardInfo.index.writing);
@@ -28,7 +27,7 @@ const MainBoard = ({ boardInfo, penInfo }) => {
     }
   }, [boardInfo]);
   useEffect(() => {
-    if (penInfo) {
+    if (penInfo && boardInfo) {
       // console.log(penInfo);
       drawingRef.current.setOpt(penInfo);
     }
