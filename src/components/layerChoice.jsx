@@ -142,7 +142,6 @@ const layerChoice = ({ boardIndex, indexLength, renderingIndex, boardInfo, setBo
         });
       }
     }
-    console.log('render',renderIndex);
   };
   const toggleWriteLayer = (layer, index) => {
     if (writeIndex === index) {

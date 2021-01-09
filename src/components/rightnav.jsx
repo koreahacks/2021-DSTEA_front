@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import ColorSelector from 'src/components/colorSelector';
 import LayerChoice from 'src/components/layerChoice';
 import UserStatus from 'src/components/userStatus';
-import AuthReq from 'src/components/authReq';
 
 const SHAPE_BORDER = '1px solid #000000';
 const BOX_BORDER = '2px solid #404040';
@@ -105,7 +104,7 @@ const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo, userInfo }) =>
       <ColorBox><ColorSelector penInfo={penInfo} setPenInfo={setPenInfo} /></ColorBox>
     </PenWrapper>
     {/* <UserStatus></UserStatus> */}
-    <AuthReq />
+    {/* <AuthReq user={userInfo[0]} setUserInfo={setUserInfo} /> */}
     <LayerChoice
       boardIndex={boardInfo.index[boardInfo.index.current]}
       renderingIndex={boardInfo.index.rendering}

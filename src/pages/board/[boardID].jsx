@@ -40,7 +40,7 @@ const Main = () => {
       username: 'ReactkingKojin',
       type: 'admin',
     }, {
-      username: 'Lovely Bbanjo',
+      username: 'BbanjowholovesJW',
       type: 'manager',
     }, {
       username: 'DesignSlaveUKth',
@@ -87,8 +87,9 @@ const Main = () => {
           boardInfo={boardInfo}
           setBoardInfo={setBoardInfo}
           userInfo={userInfo}
+          setUserInfo={setUserInfo}
+          boardID={boardID}
         />
-        {/* <RightNav></RightNav> */}
       </section>
     </Layout>
   );
