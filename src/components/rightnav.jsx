@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import ColorSelector from 'src/components/colorSelector';
+import UserStatus from 'src/components/userStatus';
 
 const SHAPE_BORDER = '0.8px solid #000000';
 const BOX_BORDER = '1px solid #000000';
@@ -8,7 +9,6 @@ const BORDER_RADIUS = '4px';
 
 const PenWrapper = styled.div`
   z-index: 1;
-  background-color: #ffffff;
   position: absolute;
   right: 0px;
   top: 10px;
@@ -21,6 +21,7 @@ const PenBox = styled.div`
   padding: 2px;
   height: 28px;
   width: 28px;
+  background-color: #ffffff;
   border: ${BOX_BORDER};
   border-radius: ${BORDER_RADIUS};
   cursor: pointer;
@@ -29,6 +30,7 @@ const PenBox = styled.div`
 const ColorBox = styled.div`
   margin: 0 5px;
   padding: 5px;
+  background-color: #ffffff;
   border: ${BOX_BORDER};
   border-radius: ${BORDER_RADIUS};
 `;
@@ -59,7 +61,7 @@ const RectIcon = styled.div`
     cursor: pointer;
 `;
 
-const rightnav = ({ penInfo, setPenInfo }) => (
+const rightnav = ({ penInfo, setPenInfo, userInfo }) => (
   <div className="rightnav">
     <PenWrapper>
       <PenBox onClick={() => {
@@ -94,7 +96,7 @@ const rightnav = ({ penInfo, setPenInfo }) => (
       </PenBox>
       <ColorBox><ColorSelector penInfo={penInfo} setPenInfo={setPenInfo} /></ColorBox>
     </PenWrapper>
-    {/* <UserStatus></UserStatus> */}
+    <UserStatus userInfo={userInfo} />
     {/* <LayerChoice></LayerChoice> */}
   </div>
 );
