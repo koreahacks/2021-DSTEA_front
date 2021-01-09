@@ -13,8 +13,8 @@ const Popup = ({ children, handleFile, intro, setIntro, loadState, setLoadState 
   const handleDrop = (e) => {
     defaultBehavior(e);
     setIntro(false);
+    setLoadState('loading');
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      setLoadState('loading');
       handleFile(e.dataTransfer.files);
       e.dataTransfer.clearData();
     }
