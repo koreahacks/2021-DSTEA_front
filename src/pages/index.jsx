@@ -9,7 +9,7 @@ const Main = () => {
     try {
       const {
         data,
-      } = await axios.get(`${BACKEND_URL}:${BACKEND_PORT}/api/new_board`, { withCredentials: true });
+      } = await axios.get(`${BACKEND_URL}/api/new_board`, { withCredentials: true });
       router.push(`/board/${data.board}`);
       return data;
     } catch (error) {
