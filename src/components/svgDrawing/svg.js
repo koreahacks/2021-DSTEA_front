@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 /* eslint-disable import/prefer-default-export */
 /**
  * @param {Number[][]} d path의 각 점의 정보 ex) [[0, 0], [10, 10], [30, 50]]
@@ -9,6 +11,7 @@ const SVG_NS = 'http://www.w3.org/2000/svg';
 export class Path {
   constructor({ d, ...attrs }) {
     this.attrs = attrs;
+    this.id = uuidv4();
     if (d) {
       this.commands = d;
     } else {
@@ -43,6 +46,7 @@ export class Path {
     const attrs = {
       ...this.attrs,
       d: this.getCommandString(),
+      id: this.id,
     }
     Object.keys(attrs)
       .sort()
@@ -101,24 +105,8 @@ class SVG {
   }
 }
 
-class Sender {
-  constructor({boardID, sessionID}) {
-    this.baseURL = 'http://49.50.167.155:8001';
-    this.current = {
-      write: new WebSocket(`${this.baseURL}/${boardID}/${sessionID}`),
-      delete: new WebSocket(`${this.baseURL}/delete/`),
-    };
-  }
-  write(data) {
-    this.current.write.write(JSON.stringify(data));
-  }
-  setEvent(type, callbackName, callback) {
-    this.current[type][callbackName] = callback;
-  }
-}
-
 class Render extends SVG {
-  constructor(parent, id, opt = {}, socketOpt = {}) {
+  constructor(parent, id, opt = {}) {
     const { width, height, left, top } = parent.getBoundingClientRect();
     super({ width, height, ...opt });
     this.id = id;
@@ -126,14 +114,13 @@ class Render extends SVG {
     this.left = left;
     this.top = top;
     // parent.appendChild(this.toPaths(this.id));
-    this.sender = new Sender(socketOpt);
   }
   update() {
     console.log('update', this.id);
     this.parent.replaceChild(this.toPaths(this.id), this.parent.getElementById(this.id));
   }
   delete() {
-    const target = this.parent.getElementById(this.id)
+    const target = this.parent.getElementById(this.id);
     if (target) {
       target.remove();
     }
@@ -151,8 +138,8 @@ class Render extends SVG {
 }
 
 export class SVGDrawing extends Render {
-  constructor(parent, id, opt = {}, socketOpt = {}) {
-    super(parent, id, opt, socketOpt);
+  constructor(parent, id, opt = {}) {
+    super(parent, id, opt);
     this.parent = parent;
 
     this.handleStart = this.handleStart.bind(this);
@@ -235,6 +222,9 @@ export class SVGDrawings {
     if (this.writingIndex !== null) {
       this.SVGs[this.writingIndex].on();
     }
+
+    this.sender = new Sender(socketOpt);
+    this.sender.setEvent('write', 'send')
   }
   setRenderingIndex(index) {
     const deleteIndex = this.renderingIndexs; // .filter((i) => !index.includes(i));
@@ -268,6 +258,22 @@ export class SVGDrawings {
   getIndex() {
     console.log('current write:', this.writingIndex);
     console.log('current render:', this.renderingIndexs);
+  }
+}
+
+class Sender {
+  constructor({boardID, sessionID}) {
+    this.baseURL = 'http://49.50.167.155:8001';
+    this.current = {
+      write: new WebSocket(`${this.baseURL}/${boardID}/${sessionID}`),
+      delete: new WebSocket(`${this.baseURL}/delete/`),
+    };
+  }
+  write(data) {
+    this.current.write.write(JSON.stringify(data));
+  }
+  setEvent(type, callbackName, callback) {
+    this.current[type][callbackName] = callback;
   }
 }
 

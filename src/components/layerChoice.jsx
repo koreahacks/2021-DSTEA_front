@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const Wrapper = styled.div`
-  width: 170px;
+  width: 110px;
   position: absolute;
-  bottom: 50px;
+  bottom: 30px;
   right: 15px;
   z-index: 2;
 `;
@@ -39,8 +39,10 @@ const ToggleCircle = styled.div`
 `;
 const ToggleWriteContainer = styled.span`
   cursor: pointer;
+  margin-top: 2px;
   ${(props) => props.on && css`
     color: #5eb9f5;
+    font-weight: 650;
   `};
 `;
 
