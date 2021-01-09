@@ -10,6 +10,7 @@ const Wrapper = styled.header`
   padding: 15px 15px;
   font-size: 30px;
   font-weight: 400;
+  color: #505050;
   font-family: 'Patrick Hand', cursive;
   z-index: 1;
 `;

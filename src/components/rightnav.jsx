@@ -1,7 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import ColorSelector from 'src/components/colorSelector';
+<<<<<<< HEAD
 import LayerChoice from 'src/components/layerChoice';
+=======
+import UserStatus from 'src/components/userStatus';
+>>>>>>> 65162d84a053f71f6fc461a799a79ae6cab84609
 
 const SHAPE_BORDER = '0.8px solid #000000';
 const BOX_BORDER = '1px solid #000000';
@@ -15,7 +19,6 @@ const RightNav = styled.div`
 
 const PenWrapper = styled.div`
   z-index: 1;
-  background-color: #ffffff;
   position: absolute;
   right: 0px;
   top: 10px;
@@ -28,6 +31,7 @@ const PenBox = styled.div`
   padding: 2px;
   height: 28px;
   width: 28px;
+  background-color: #ffffff;
   border: ${BOX_BORDER};
   border-radius: ${BORDER_RADIUS};
   cursor: pointer;
@@ -36,6 +40,7 @@ const PenBox = styled.div`
 const ColorBox = styled.div`
   margin: 0 5px;
   padding: 5px;
+  background-color: #ffffff;
   border: ${BOX_BORDER};
   border-radius: ${BORDER_RADIUS};
 `;
@@ -66,7 +71,7 @@ const RectIcon = styled.div`
     cursor: pointer;
 `;
 
-const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo }) => (
+const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo, userInfo }) => (
   <RightNav>
     <PenWrapper>
       <PenBox onClick={() => {
@@ -109,6 +114,7 @@ const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo }) => (
       boardInfo={boardInfo}
       setBoardInfo={setBoardInfo}
     />
+    <UserStatus userInfo={userInfo} />
   </RightNav>
 );
 
