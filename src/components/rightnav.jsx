@@ -1,10 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
 import ColorSelector from 'src/components/colorSelector';
+import LayerChoice from 'src/components/layerChoice';
 
 const SHAPE_BORDER = '0.8px solid #000000';
 const BOX_BORDER = '1px solid #000000';
 const BORDER_RADIUS = '4px';
+
+const RightNav = styled.div`
+  position: relative;
+  width: 200px;
+  background-color: #ffffff;
+`;
 
 const PenWrapper = styled.div`
   z-index: 1;
@@ -59,8 +66,8 @@ const RectIcon = styled.div`
     cursor: pointer;
 `;
 
-const rightnav = ({ penInfo, setPenInfo }) => (
-  <div className="rightnav">
+const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo }) => (
+  <RightNav>
     <PenWrapper>
       <PenBox onClick={() => {
         setPenInfo({
@@ -95,8 +102,14 @@ const rightnav = ({ penInfo, setPenInfo }) => (
       <ColorBox><ColorSelector penInfo={penInfo} setPenInfo={setPenInfo} /></ColorBox>
     </PenWrapper>
     {/* <UserStatus></UserStatus> */}
-    {/* <LayerChoice></LayerChoice> */}
-  </div>
+    <LayerChoice
+      boardIndex={boardInfo.index.writing}
+      renderingIndex={boardInfo.index.rendering}
+      indexLength={boardInfo.urls.length}
+      boardInfo={boardInfo}
+      setBoardInfo={setBoardInfo}
+    />
+  </RightNav>
 );
 
 export default rightnav;

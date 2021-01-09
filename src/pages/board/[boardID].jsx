@@ -49,6 +49,8 @@ const Main = () => {
         <RightNav
           penInfo={penInfo}
           setPenInfo={setPenInfo}
+          boardInfo={boardInfo}
+          setBoardInfo={setBoardInfo}
         />
         {/* <RightNav></RightNav> */}
       </section>
