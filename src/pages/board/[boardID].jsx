@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
+import Header from 'src/components/header';
 
 const Main = () => {
   const router = useRouter();
@@ -8,7 +9,7 @@ const Main = () => {
 
   return (
     <Layout>
-      {/* <Header /> */}
+      <Header />
       <section>
         {/* <LeftNav></LeftNav> */}
         {/* <MainBoard></MainBoard> */}
