@@ -4,8 +4,8 @@ import ColorSelector from 'src/components/colorSelector';
 import LayerChoice from 'src/components/layerChoice';
 import UserStatus from 'src/components/userStatus';
 
-const SHAPE_BORDER = '0.8px solid #000000';
-const BOX_BORDER = '1px solid #000000';
+const SHAPE_BORDER = '1px solid #000000';
+const BOX_BORDER = '2px solid #404040';
 const BORDER_RADIUS = '4px';
 
 const RightNav = styled.div`
