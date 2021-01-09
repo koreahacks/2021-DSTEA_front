@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import MainBoard from 'src/components/mainBoard';
 import Header from 'src/components/header';
 import LeftNav from 'src/components/leftnav';
-
+import PopUp from 'src/components/popup';
 import RightNav from 'src/components/rightnav';
 
 const Main = () => {
@@ -13,7 +13,7 @@ const Main = () => {
   const navbar = useRef();
 
   const [boardInfo, setBoardInfo] = useState({
-    type: 'ppt',
+    type: 'none',
     index: {
       rendering: [0, 5],
       writing: 5,
@@ -61,13 +61,26 @@ const Main = () => {
     <Layout>
       <Header />
       <section ref={navbar}>
-        <LeftNav boardInfo={boardInfo} setBoardInfo={setBoardInfo} navbar={navbar} />
-        <div className="main-wrapper">
-          <MainBoard
-            boardInfo={boardInfo}
-            penInfo={penInfo}
-          />
-        </div>
+        {boardInfo.type !== 'none' ? <LeftNav boardInfo={boardInfo} setBoardInfo={setBoardInfo} navbar={navbar} /> : ''}
+        {boardInfo.type !== 'none' ? (
+          <div className="main-wrapper">
+            <MainBoard
+              boardInfo={boardInfo}
+              penInfo={penInfo}
+            />
+          </div>
+        ) : (
+          <div className="main-wrapper">
+            <PopUp handleFile={(file) => {
+              alert(file[0].name);
+            }}
+            >
+              <MainBoard
+                penInfo={penInfo}
+              />
+            </PopUp>
+          </div>
+        )}
         <RightNav
           penInfo={penInfo}
           setPenInfo={setPenInfo}

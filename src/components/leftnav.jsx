@@ -4,7 +4,7 @@ import styled from 'styled-components';
 const sidenav = ({ boardInfo, setBoardInfo, navbar }) => {
   const len = boardInfo.urls.length;
   const [navWidth, setNavWidth] = useState(160);
-  const minWidth = 140, maxWidth = 190;
+  const minWidth = 80, maxWidth = 190;
 
   const resize = (e) => {
     e.preventDefault();

@@ -57,7 +57,8 @@ const Layout = styled.div`
       content: "";
       position: absolute;
       left: -17px;
-      top: 1px;
+      top: 50%;
+      transform: translateY(-50%);
       background-image: url('/star.svg');
       width: 13px;
       height: 13px;
