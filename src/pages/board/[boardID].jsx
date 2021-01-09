@@ -1,17 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
+import MainBoard from 'src/components/mainBoard';
 
 const Main = () => {
   const router = useRouter();
   const { boardID } = router.query;
+  const [boardInfo, setBoardInfo] = useState({
+    type: 'ppt',
+    index: {
+      rendering: [0, 6],
+      writing: 0,
+    },
+    urls: [
+      'https://picsum.photos/500/600?random=0',
+      'https://picsum.photos/500/600?random=1',
+      'https://picsum.photos/500/600?random=2',
+      'https://picsum.photos/500/600?random=3',
+      'https://picsum.photos/500/600?random=4',
+    ],
+  });
+  const [penInfo, setPenInfo] = useState({
+    type: 'pen',
+    'stroke-width': 3,
+    stroke: 'rgb(0, 0, 255)',
+  });
 
   return (
     <Layout>
       {/* <Header /> */}
       <section>
         {/* <LeftNav></LeftNav> */}
-        {/* <MainBoard></MainBoard> */}
+        <div className="main-wrapper">
+          <MainBoard
+            boardInfo={boardInfo}
+            penInfo={penInfo}
+          />
+        </div>
         {/* <RightNav></RightNav> */}
       </section>
     </Layout>
