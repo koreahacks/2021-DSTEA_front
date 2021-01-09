@@ -377,7 +377,7 @@ export class Sender {
     console.log(boardID, sessionID);
     this.baseURL = 'ws://127.0.0.1:8000';
     this.current = {
-      write: new WebSocket(`${this.baseURL}/write/003934e8-80ad-216f-8438-0778ab07bef6/1234/`),
+      write: new WebSocket(`${this.baseURL}/write/${boardID}/${sessionID}/`),
     };
   }
   //       // delete: new WebSocket(`${this.baseURL}/delete/`),

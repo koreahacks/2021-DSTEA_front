@@ -27,7 +27,7 @@ const MainBoard = ({ boardInfo, penInfo }) => {
         rendering: boardInfo.index.rendering,
         writing: boardInfo.index.writing,
       }, penInfo, {
-        boardURL: boardID,
+        boardID,
         sessionID: document.cookie ? parseCookie(document.cookie).sessionid : '',
       });
     } else {
