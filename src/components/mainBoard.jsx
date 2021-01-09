@@ -20,7 +20,7 @@ const MainBoard = ({ boardInfo, penInfo }) => {
     }
   });
   useEffect(() => {
-    console.log(boardInfo.index.rendering, boardInfo.index.writing);
+    console.log(boardInfo.index);
     if (boardInfo && boardInfo.index) {
       drawingRef.current.setRenderingIndex(boardInfo.index.rendering);
       drawingRef.current.setWritingIndex(boardInfo.index.writing);
@@ -38,7 +38,7 @@ const MainBoard = ({ boardInfo, penInfo }) => {
       <svg
         ref={board}
       >
-        {boardInfo && <Background src={boardInfo.urls[boardInfo.index.writing % boardInfo.urls.length]} />}
+        {boardInfo && <Background src={boardInfo.urls[boardInfo.index[boardInfo.index.current]]} />}
       </svg>
     </Layout>
   );

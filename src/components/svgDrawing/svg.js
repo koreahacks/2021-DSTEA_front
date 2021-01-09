@@ -220,22 +220,18 @@ export class SVGDrawings {
     }
   }
   setRenderingIndex(index) {
-    console.log(this.SVGs);
     const deleteIndex = this.renderingIndexs; // .filter((i) => !index.includes(i));
     const createIndex = index; // .filter((i) => !this.renderingIndexs.includes(i))
     deleteIndex.forEach((i) => {
-      console.log('delete', i);
       this.SVGs[i].delete();
     });
     createIndex.forEach((i) => {
-      console.log('create', i);
       this.SVGs[i].create();
     });
     this.renderingIndexs = index;
   }
   setWritingIndex(index) {
     if (this.writingIndex === index) return;
-    console.log(this.writingIndex, 'to', index);
     if (this.writingIndex !== null) {
         this.SVGs[this.writingIndex].off();
     }
