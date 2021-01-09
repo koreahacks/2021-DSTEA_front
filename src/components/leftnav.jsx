@@ -33,13 +33,15 @@ const sidenav = ({ boardInfo, setBoardInfo, navbar }) => {
     setBoardInfo({
       ...boardInfo,
       index: {
+        ...boardInfo.index,
         writing,
         rendering,
+        user: index,
       },
     });
   };
   useEffect(() => {
-    console.log(boardInfo.index);
+    console.log(boardInfo);
   }, [boardInfo]);
   return (
     <Layout
@@ -50,8 +52,7 @@ const sidenav = ({ boardInfo, setBoardInfo, navbar }) => {
         <div className="sidenav">
           {boardInfo.urls.map((url, i) => (
             <div
-              className={`thumbnail ${boardInfo.index.writing % len == i ? 'on' : ''}`}
-            //    ${boardInfo.index.rendering.includes(i) ? 'on' : ''}
+              className={`thumbnail ${boardInfo.index.user === i ? 'on' : boardInfo.index.admin === i ? 'public' : ''}`}
               key={i}
               onClick={() => {
                 setIndex(i);

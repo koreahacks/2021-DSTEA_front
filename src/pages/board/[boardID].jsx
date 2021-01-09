@@ -5,6 +5,8 @@ import MainBoard from 'src/components/mainBoard';
 import Header from 'src/components/header';
 import LeftNav from 'src/components/leftnav';
 
+import RightNav from 'src/components/rightnav';
+
 const Main = () => {
   const router = useRouter();
   const { boardID } = router.query;
@@ -15,6 +17,9 @@ const Main = () => {
     index: {
       rendering: [0, 6],
       writing: 6,
+      user: 0,
+      admin: 1,
+      current: 'user',
     },
     urls: [
       'https://picsum.photos/500/600?random=0',
@@ -27,7 +32,7 @@ const Main = () => {
   const [penInfo, setPenInfo] = useState({
     type: 'pen',
     'stroke-width': 3,
-    stroke: 'rgb(0, 0, 255)',
+    stroke: 'rgba(132, 228, 247, 1.0)',
   });
 
   return (
@@ -41,6 +46,10 @@ const Main = () => {
             penInfo={penInfo}
           />
         </div>
+        <RightNav
+          penInfo={penInfo}
+          setPenInfo={setPenInfo}
+        />
         {/* <RightNav></RightNav> */}
       </section>
     </Layout>
