@@ -9,26 +9,63 @@ import RightNav from 'src/components/rightnav';
 import axios from 'axios';
 import { BACKEND_URL } from 'config';
 
+
+
+export class getUserList {
+  constructor(socketOpt = {boardURL: '', sessionID: ''}) {
+    this.sender = new Socket(socketOpt);
+    this.sender.current.getUser.onmessage = (e) => {
+      const data = JSON.parse(e.data);
+      console.log("socket data", data);
+      const { nickname, type } = data;
+      const userType = {
+        0: 'admin',
+        1: 'manager',
+        2: 'guest'
+      }
+      setUserInfo([
+        ...userInfo,
+        {
+          username: nickname,
+          type: userType[type],
+        },
+      ]);
+    };
+  }
+}
+
+export class Socket {
+  constructor({boardID, sessionID}) {
+    this.baseURL = `ws://49.50.167.155:8001/auth/${boardID}/${sessionID}`;
+    this.current = {
+      getUser: new WebSocket(`${this.baseURL}`),
+    };
+  }
+  setEvent(type, callbackName, callback) {
+    this.current[type][callbackName] = callback;
+  }
+}
+
 const Main = () => {
   const router = useRouter();
   const { boardID } = router.query;
   const navbar = useRef();
   const [intro, setIntro] = useState(true);
   const [boardInfo, setBoardInfo] = useState({
-    type: 'ppt',
+    type: 'none',
     index: {
-      rendering: [0, 5],
+      rendering: [0, 1],
       writing: 0,
       user: 0,
       admin: 0,
       current: 'user',
     },
     urls: [
-      'https://picsum.photos/500/600?random=0',
-      'https://picsum.photos/500/600?random=1',
-      'https://picsum.photos/500/600?random=2',
-      'https://picsum.photos/500/600?random=3',
-      'https://picsum.photos/500/600?random=4',
+      // 'https://picsum.photos/500/600?random=0',
+      // 'https://picsum.photos/500/600?random=1',
+      // 'https://picsum.photos/500/600?random=2',
+      // 'https://picsum.photos/500/600?random=3',
+      // 'https://picsum.photos/500/600?random=4',
     ],
   });
   React.useEffect(() => {
@@ -40,27 +77,40 @@ const Main = () => {
     stroke: 'rgba(132, 228, 247, 1.0)',
   });
 
-  const [userInfo, setUserInfo] = useState([
-    {
-      username: 'ReactkingKojin',
-      type: 'admin',
-    }, {
-      username: 'BbanjowholovesJW',
-      type: 'manager',
-    }, {
-      username: 'DesignSlaveUKth',
-      type: 'guest',
-    }, {
-      username: 'ToeicKing Taeho',
-      type: 'guest',
-    }, {
-      username: 'L0Z1KtheCB_Lover',
-      type: 'guest',
-    }, {
-      username: 'ComputerInstallerHanch',
-      type: 'guest',
-    },
-  ]);
+  new getUserList({
+    boardURL: boardID,
+    sessionID: document.cookie ? parseCookie(document.cookie).sessionid : '',
+  });
+
+  // const [userInfo, setUserInfo] = useState([
+    // {
+    //   username: 'ReactkingKojin',
+    //   type: 'admin',
+    // }, {
+    //   username: 'BbanjowholovesJW',
+    //   type: 'manager',
+    // }, {
+    //   username: 'DesignSlaveUKth',
+    //   type: 'guest',
+    // },
+  // ]);
+
+  const userType = {
+    0: 'admin',
+    1: 'manager',
+    2: 'guest'
+  }
+  const res = axios.get(`http://49.50.167.155/api/${boardID}/user`);
+  // JSON.parse();
+  console.log("get data", res.data);
+  setUserInfo(
+    res.data.map(({ username, type }) => {
+      return({
+        username:username,
+        type:userType[type]
+      });
+    })
+  );
 
   const [loadState, setLoadState] = useState("waiting");
   
@@ -132,7 +182,7 @@ const Main = () => {
             </PopUp>
           </div>
         )}
-        {!intro && loadState === 'complete' || boardInfo.type !== 'none' ? 
+        {!intro && loadState === 'complete' ? 
           <RightNav
             penInfo={penInfo}
             setPenInfo={setPenInfo}
