@@ -46,9 +46,6 @@ const sidenav = ({ boardInfo, setBoardInfo, navbar }) => {
       },
     });
   };
-  useEffect(() => {
-    console.log(boardInfo);
-  }, [boardInfo]);
   return (
     <Layout
       style={{
