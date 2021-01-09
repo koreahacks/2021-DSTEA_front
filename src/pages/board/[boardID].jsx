@@ -61,6 +61,8 @@ const Main = () => {
       type: 'guest',
     },
   ]);
+
+  const [loadState, setLoadState] = useState("waiting");
   
   const fileUpload = async (file) => {
     const formData = new FormData();
@@ -101,6 +103,7 @@ const Main = () => {
           <div className="main-wrapper">
             <PopUp handleFile={(file) => {
               fileUpload(file[0]).then((res) => {
+                setLoadState('complete');
                 console.log(res);
                 setBoardInfo({
                   ...boardInfo,
@@ -118,6 +121,8 @@ const Main = () => {
             }}
             intro={intro}
             setIntro={setIntro}
+            loadState={loadState}
+            setLoadState={setLoadState}
             >
               <MainBoard
                 penInfo={penInfo}
