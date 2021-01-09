@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import MainBoard from 'src/components/mainBoard';
@@ -31,9 +31,6 @@ const Main = () => {
       // 'https://picsum.photos/500/600?random=4',
     ],
   });
-  React.useEffect(() => {
-    console.log(boardInfo);
-  }, [boardInfo])
   const [penInfo, setPenInfo] = useState({
     type: 'pen',
     'stroke-width': 3,
@@ -43,7 +40,7 @@ const Main = () => {
   const [userInfo, setUserInfo] = useState([
   //  {
   //    username: 'ReactkingKojin',
-  //    type: 'admin',
+  //    auth: true,
   //  }, {
   //    username: 'BbanjowholovesJW',
   //    type: 'manager',
@@ -61,7 +58,15 @@ const Main = () => {
   //    type: 'guest',
   //  },
   ]);
+  const parseCookie = (str) => str
+  .split(';')
+  .map((v) => v.split('='))
+  .reduce((acc, v) => {
+    acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(v[1].trim());
+    return acc;
+  }, {});
   let sessionid = "";
+  let myUserInfo = {}; 
   const [loadState, setLoadState] = useState("waiting");
 
   const getUsersInfo = async () => {
@@ -86,6 +91,15 @@ const Main = () => {
       console.log(error);
     }
   };
+  useEffect(() => {
+    getMyInfo().then((res) => {
+      console.log(res);
+      myUserInfo = res;
+    });
+    getUsersInfo().then((res) => {
+      setUserInfo(res.nickname);
+    });
+  });
   const fileUpload = async (file) => {
     const formData = new FormData();
     try {
@@ -109,13 +123,6 @@ const Main = () => {
       return false;
     }
   };
-  getUsersInfo().then((res) => {
-    // setUserInfo(res);
-  });
-  getMyInfo().then((res) => {
-    console.log(res);
-    sessionid = res.user;
-  });
   return (
     <Layout>
       <Header />
@@ -170,7 +177,8 @@ const Main = () => {
             userInfo={userInfo}
             setUserInfo={setUserInfo}
             boardID={boardID}
-            sessionid={sessionid}
+            myInfo={myUserInfo}
+            sessionid={myUserInfo.user}
           />
         : null }
       </section>

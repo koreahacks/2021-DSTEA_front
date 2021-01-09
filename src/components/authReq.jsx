@@ -13,9 +13,7 @@ const PopUp = styled.div`
     border: 2px solid #f4f4f4;
     background-color: #f4f4f4;
     border-radius: 4px;
-    ${(props) => props.index && css`
-    z-index: ${100 - props.index};
-    `};
+    z-index: 100;
     box-shadow: rgba(0, 0, 0, 0.1) 0 6px 9px 0;
 `;
 
@@ -68,9 +66,9 @@ const Container = styled.button`
         background-color: #e8e8e8;
     }
 `;
-const Button = ({ isAuthorized, onClick, text }) => <Container isAuthorized={isAuthorized} onClick={onClick}>{text}</Container>;
+const Button = ({ onClick, text }) => <Container onClick={onClick}>{text}</Container>;
 
-const AuthReqButton = ({ isAuthorized, onClick, text }) => <Button isAuthorized={isAuthorized} onClick={onClick} text={text} />;
+const AuthReqButton = ({ onClick, text }) => <Button onClick={onClick} text={text} />;
 
 const AuthWindow = ({ user, boardID, sessionid }) => {
   // const [isAdmin, setIsAdmin] = useState(user.type);
@@ -96,18 +94,12 @@ const AuthWindow = ({ user, boardID, sessionid }) => {
     ws.onmessage = (e) => {
       const msg = JSON.stringify(e.data);
       if (msg.action === 'res') {
-        setAuthReqUser([
-          ...authReqUser,
-          {
-            session_id: sessionid,
-            nickname: user.nickname,
-          },
-        ]);
+        
       }
       console.log('e', msg);
     };
   }, [ws]);
-  const AuthReqPopUp = ({ userr, sessionID, onClickk, id }) => {
+  const AuthReqPopUp = ({ userr, sessionID, onClickk }) => {
     const [visible, setVisible] = useState(true);
     const onClick = (bool) => {
       setVisible(false);
@@ -115,7 +107,7 @@ const AuthWindow = ({ user, boardID, sessionid }) => {
     };
     return (
       visible && (
-      <PopUp index={id}>
+      <PopUp>
         <PopUpText><Bold>{userr.nickname}</Bold> requested an authority.</PopUpText> {/* user.nickname */}
         <PopUpButton onClick={() => onClick(true)}>Yes</PopUpButton>
         <PopUpButton onClick={() => onClick(false)}>No</PopUpButton>
@@ -126,17 +118,16 @@ const AuthWindow = ({ user, boardID, sessionid }) => {
   return (
     <>
       {
-        user.type === 'admin' ? (authReqUser.users.map((userr, idx) => (
+        user.auth ? (authReqUser.users.map((userr, idx) => (
           <AuthReqPopUp
             key={userr.session_id}
             sessionid={sessionid}
-            id={idx}
             user={userr}
             onClick={jsonSend}
           />
         ))
         )
-          : (<AuthReqButton isAuthorized={isAuthorized} onClick={() => jsonSend({ action: 'req' })} text={'Request Authority'} />)
+          : (<AuthReqButton onClick={() => jsonSend({ action: 'req' })} text={'Request Authority'} />)
       }
     </>
   );
