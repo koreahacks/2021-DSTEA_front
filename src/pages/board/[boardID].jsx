@@ -37,36 +37,8 @@ const Main = () => {
     stroke: 'rgba(132, 228, 247, 1.0)',
   });
 
-  const [userInfo, setUserInfo] = useState([
-  //  {
-  //    username: 'ReactkingKojin',
-  //    auth: true,
-  //  }, {
-  //    username: 'BbanjowholovesJW',
-  //    type: 'manager',
-  //  }, {
-  //    username: 'DesignSlaveUKth',
-  //    type: 'guest',
-  //  }, {
-  //    username: 'ToeicKing Taeho',
-  //    type: 'guest',
-  //  }, {
-  //    username: 'L0Z1KtheCB_Lover',
-  //    type: 'guest',
-  //  }, {
-  //    username: 'ComputerInstallerHanch',
-  //    type: 'guest',
-  //  },
-  ]);
-  const parseCookie = (str) => str
-  .split(';')
-  .map((v) => v.split('='))
-  .reduce((acc, v) => {
-    acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(v[1].trim());
-    return acc;
-  }, {});
-  let sessionid = "";
-  let myUserInfo = {}; 
+  // const [userInfo, setUserInfo] = useState([]);
+  const [myInfo, setMyInfo] = useState({});
   const [loadState, setLoadState] = useState("waiting");
 
   const getUsersInfo = async () => {
@@ -74,7 +46,6 @@ const Main = () => {
       const {
         data,
       } = await axios.get(`${BACKEND_URL}/api/${boardID}/user`, { withCredentials: true });
-      console.log('getusers', data);
       return data;
     } catch (error) {
       console.log(error);
@@ -82,10 +53,7 @@ const Main = () => {
   };
   const getMyInfo = async () => {
     try {
-      const {
-        data,
-      } = await axios.get(`${BACKEND_URL}/api/${boardID}`, { withCredentials: true });
-      console.log('getmyinfo', data);
+      const { data } = await axios.get(`${BACKEND_URL}/api/${boardID}`, { withCredentials: true });
       return data;
     } catch (error) {
       console.log(error);
@@ -93,13 +61,16 @@ const Main = () => {
   };
   useEffect(() => {
     getMyInfo().then((res) => {
-      console.log(res);
-      myUserInfo = res;
+      setMyInfo(res);
     });
-    getUsersInfo().then((res) => {
-      setUserInfo(res.nickname);
-    });
-  });
+  }, []);
+  // useEffect(() => {
+  //   if (Object.keys(myInfo) > 0) {
+  //     getUsersInfo().then((res) => {
+  //       setUserInfo(res.user_info);
+  //     });  
+  //   }
+  // }, [myInfo]);
   const fileUpload = async (file) => {
     const formData = new FormData();
     try {
@@ -133,6 +104,8 @@ const Main = () => {
             <MainBoard
               boardInfo={boardInfo}
               penInfo={penInfo}
+              boardID={boardID}
+              myInfo={myInfo}
             />
           </div>
         ) : (
@@ -164,7 +137,9 @@ const Main = () => {
               <MainBoard
                 boardInfo={boardInfo}
                 penInfo={penInfo}
-              />
+                boardID={boardID}
+                myInfo={myInfo}
+              />              
             </PopUp>
           </div>
         )}
@@ -174,11 +149,10 @@ const Main = () => {
             setPenInfo={setPenInfo}
             boardInfo={boardInfo}
             setBoardInfo={setBoardInfo}
-            userInfo={userInfo}
-            setUserInfo={setUserInfo}
+            // userInfo={userInfo}
+            // setUserInfo={setUserInfo}
             boardID={boardID}
-            myInfo={myUserInfo}
-            sessionid={myUserInfo.user}
+            myInfo={myInfo}
           />
         : null }
       </section>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
-import { BACKEND_URL, BACKEND_PORT } from 'config';
+import { socketURL, BACKEND_PORT } from 'config';
 import axios from 'axios';
 import { useEffect } from 'react/cjs/react.development';
 
@@ -70,14 +70,14 @@ const Button = ({ onClick, text }) => <Container onClick={onClick}>{text}</Conta
 
 const AuthReqButton = ({ onClick, text }) => <Button onClick={onClick} text={text} />;
 
-const AuthWindow = ({ user, boardID, sessionid }) => {
+const AuthWindow = ({ user, boardID }) => {
   // const [isAdmin, setIsAdmin] = useState(user.type);
   // const [isAuthorized, setIsAuthorized] = useState(undefined);
   const [authReqUser, setAuthReqUser] = useState([{}]);
   const [ws, setWs] = useState(null);
-  const socketUrl = `ws://${BACKEND_URL}/auth/${boardID}/${sessionid}`;
   useEffect(() => {
-    const wsClient = new WebSocket(socketUrl);
+    if (user.user === undefined) return;
+    const wsClient = new WebSocket(`ws://${socketURL}/auth/${boardID}/${user.user}`);
     wsClient.onopen = () => {
       console.log('web socket open');
       setWs(wsClient);
@@ -91,6 +91,7 @@ const AuthWindow = ({ user, boardID, sessionid }) => {
     ws.send(JSON.stringify(msg));
   };
   useEffect(() => {
+    if (!ws) return;
     ws.onmessage = (e) => {
       const msg = JSON.stringify(e.data);
       if (msg.action === 'res') {

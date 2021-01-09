@@ -1,34 +1,22 @@
 import React, { useRef, useEffect } from 'react';
-import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { SVGDrawings } from 'src/components/svgDrawing/svg';
 
-const MainBoard = ({ boardInfo, penInfo }) => {
+const MainBoard = ({ boardInfo, penInfo, boardID, myInfo }) => {
   // 차후 svgdrawing에 사용할 ref
   const board = useRef();
   const drawingRef = useRef();
-
-  const router = useRouter();
-  const { boardID } = router.query;
-  console.log(boardID);
-  const parseCookie = (str) => str
-    .split(';')
-    .map((v) => v.split('='))
-    .reduce((acc, v) => {
-      acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(v[1].trim());
-      return acc;
-    }, {});
-
   useEffect(() => {
     if (drawingRef.current) return;
     if (!board.current) return;
     if (boardInfo && boardInfo.type !== 'none') {
+      if (myInfo.user === undefined) return;
       drawingRef.current = new SVGDrawings(board.current, boardInfo.urls.length * 2, {
         rendering: boardInfo.index.rendering,
         writing: boardInfo.index.writing,
       }, penInfo, {
         boardID,
-        sessionID: document.cookie ? parseCookie(document.cookie).sessionid : '',
+        sessionID: myInfo.user ? myInfo.user : 'fuck',
       });
     } else {
       drawingRef.current = new SVGDrawings(board.current, 2, {
@@ -41,6 +29,7 @@ const MainBoard = ({ boardInfo, penInfo }) => {
     }
   });
   useEffect(() => {
+    if (drawingRef.current === undefined) return;
     console.log(boardInfo.index);
     if (boardInfo && boardInfo.index) {
       drawingRef.current.setRenderingIndex(boardInfo.index.rendering);
@@ -49,6 +38,7 @@ const MainBoard = ({ boardInfo, penInfo }) => {
     }
   }, [boardInfo]);
   useEffect(() => {
+    if (drawingRef.current === undefined) return;
     if (penInfo && boardInfo) {
       // console.log(penInfo);
       drawingRef.current.setOpt(penInfo);

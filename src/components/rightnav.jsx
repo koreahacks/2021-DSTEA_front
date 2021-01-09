@@ -1,9 +1,10 @@
-import React from 'react';
+import React,  {useEffect } from 'react';
 import styled from 'styled-components';
 import ColorSelector from 'src/components/colorSelector';
 import LayerChoice from 'src/components/layerChoice';
 import UserStatus from 'src/components/userStatus';
 import AuthReq from 'src/components/authReq';
+
 
 const SHAPE_BORDER = '2px solid #303030';
 const BOX_BORDER = '2px solid #e4e4e4';
@@ -96,7 +97,11 @@ const RectIcon = styled.div`
     cursor: pointer;
 `;
 
-const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo, userInfo, boardID, myInfo, sessionid }) => (
+const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo, userInfo, boardID, myInfo }) => {
+  useEffect(() => {
+    if (myInfo.user === undefined) return;
+  })
+  return (
   <RightNav>
     <PenWrapper>
       <PenBox onClick={() => {
@@ -132,7 +137,7 @@ const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo, userInfo, boar
       <ColorBox><ColorSelector penInfo={penInfo} setPenInfo={setPenInfo} /></ColorBox>
     </PenWrapper>
     {/* <UserStatus></UserStatus> */}
-    <AuthReq user={myInfo} boardID={boardID} sessionid={sessionid} />
+    <AuthReq user={myInfo} boardID={boardID} />
     <LayerChoice
       boardIndex={boardInfo.index[boardInfo.index.current]}
       renderIndex={boardInfo.index.rendering}
@@ -140,8 +145,8 @@ const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo, userInfo, boar
       boardInfo={boardInfo}
       setBoardInfo={setBoardInfo}
     />
-    <UserStatus userInfo={userInfo} />
+    {/* <UserStatus userInfo={userInfo} /> */}
   </RightNav>
-);
+);}
 
 export default rightnav;

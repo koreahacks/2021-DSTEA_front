@@ -120,18 +120,15 @@ class Render extends SVG {
     // parent.appendChild(this.toPaths(this.id));
   }
   update() {
-    console.log('update', this.id);
     this.parent.replaceChild(this.toPaths(this.id), this.parent.getElementById(this.id));
   }
   delete() {
     const target = this.parent.getElementById(this.id);
-    console.log(target);
     if (target) {
       target.remove();
     }
   }
   create() {
-    console.log(this.toPaths(this.id));
     this.parent.appendChild(this.toPaths(this.id));
   }
   reSize() {
@@ -226,20 +223,16 @@ export class SVGDrawing extends Render {
       fill: "none",
       ...this.opt,
     };
-    // console.log(pathId);
     if (pathId === undefined || pathId === null) {
       this.currentPath = new Path(pathInfo);
       this.pushPath(this.currentPath);
     } else {
-      // console.log('asdfsdfxcvcva');
       pathInfo.id = pathId;
       this.currentPaths[pathId] = new Path(pathInfo);
       this.pushPath(this.currentPaths[pathId]);
     }
-    console.log(this.paths);
     if (!isSend) return;
     const path_id = pathId === undefined || pathId === null ? this.currentPath.id : pathId;
-    console.log('send start', path_id);
     
     // drawing start
     this.sendSocket({
@@ -254,10 +247,8 @@ export class SVGDrawing extends Render {
   }
 
   drawMove(x, y, pathId, isSend = true) {
-    console.log(this.currentPath);
     if (pathId === undefined && (this.currentPath === undefined || this.currentPath === null)) return;
     else if (pathId !== undefined && this.currentPaths[pathId] === undefined) return;
-    console.log(pathId);
     const position = [x - this.left, y - this.top];
     if (pathId === undefined || pathId === null) {
       this.currentPath.pushPoint(position);
@@ -266,10 +257,8 @@ export class SVGDrawing extends Render {
     }
     this.update();
 
-    console.log(this.paths);
     if (!isSend) return;
     // drawing...
-    console.log('sending', path_id);
     const path_id = pathId === undefined || pathId === null ? this.currentPath.id : pathId;
     this.sendSocket({
       status: "draw",
@@ -279,13 +268,10 @@ export class SVGDrawing extends Render {
   }
 
   drawEnd(pathID = undefined, isSend = true) {
-    console.log(pathID, this.currentPath);
     if (pathID === undefined && (this.currentPath === undefined || this.currentPath === null)) return;
     else if (pathID !== undefined && this.currentPaths[pathID] === undefined) return;
     const path_id = pathID === undefined || pathID === null ? this.currentPath.id : pathID;
-    console.log('hello', isSend);
     if (isSend) {
-      console.log('send end', path_id);
       this.sendSocket({
         status: "end",
         path_id,
@@ -375,7 +361,7 @@ export class SVGDrawings {
 export class Sender {
   constructor({boardID, sessionID}) {
     console.log(boardID, sessionID);
-    this.baseURL = 'ws://127.0.0.1:8000';
+    this.baseURL = 'ws://49.50.167.155';
     this.current = {
       write: new WebSocket(`${this.baseURL}/write/${boardID}/${sessionID}/`),
     };
