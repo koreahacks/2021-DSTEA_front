@@ -131,7 +131,7 @@ const Main = () => {
             </PopUp>
           </div>
         )}
-        {!intro ? 
+        {!intro && loadState === 'complete' ? 
           <RightNav
             penInfo={penInfo}
             setPenInfo={setPenInfo}
