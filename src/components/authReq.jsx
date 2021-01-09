@@ -76,8 +76,8 @@ const AuthWindow = ({ user, boardID }) => {
   const [authReqUser, setAuthReqUser] = useState([{}]);
   const [ws, setWs] = useState(null);
   useEffect(() => {
-    if (user.user === undefined) return;
-    const wsClient = new WebSocket(`ws://${socketURL}/auth/${boardID}/${user.user}`);
+    //if (user.user === undefined) return;
+    const wsClient = new WebSocket(`ws://${socketURL}/auth/${boardID}/${user.user}/`);
     wsClient.onopen = () => {
       console.log('web socket open');
       setWs(wsClient);

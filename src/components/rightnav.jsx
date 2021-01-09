@@ -98,9 +98,6 @@ const RectIcon = styled.div`
 `;
 
 const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo, userInfo, boardID, myInfo }) => {
-  useEffect(() => {
-    if (myInfo.user === undefined) return;
-  })
   return (
   <RightNav>
     <PenWrapper>
@@ -137,7 +134,7 @@ const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo, userInfo, boar
       <ColorBox><ColorSelector penInfo={penInfo} setPenInfo={setPenInfo} /></ColorBox>
     </PenWrapper>
     {/* <UserStatus></UserStatus> */}
-    <AuthReq user={myInfo} boardID={boardID} />
+    {(myInfo.user !== undefined) && <AuthReq user={myInfo} boardID={boardID} />}
     <LayerChoice
       boardIndex={boardInfo.index[boardInfo.index.current]}
       renderIndex={boardInfo.index.rendering}
