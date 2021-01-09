@@ -11,11 +11,15 @@ const Layout = styled.div`
   flex-direction: column;
   img {
     position: absolute;
+    right: 0px;
+    top: 0px;
     width: 40px;
     height: 40px;
   }
   img:active {
     position: absolute;
+    right: -1px;
+    top: -1px;
     width: 42px;
     height: 42px;
   }
