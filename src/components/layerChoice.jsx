@@ -67,7 +67,6 @@ const Modal = ({ visible, onClose }) => {
         <div>Can&apos;t do that</div>
         <Button onClick={onClose}>close</Button>
       </Div>
-
     )
   );
 };
@@ -79,93 +78,60 @@ const ToggleWriteLayer = ({ writeIndex, index, onClick, text }) => {
   return <ToggleWriteContainer on={0} onClick={onClick}>{text}</ToggleWriteContainer>;
 };
 
-const layerChoice = ({ boardIndex, indexLength, renderingIndex, boardInfo, setBoardInfo }) => {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [renderIndex, setRenderIndex] = useState(renderingIndex);
-  const [writeIndex, setWriteIndex] = useState(boardIndex);
-  const onClose = () => {
-    setModalVisible(false);
-  };
-  const toggleRenderLayer = (layer) => {
-    if (layer === 'Public') {
-      if (renderIndex.includes(boardIndex + indexLength)) {
-        if (writeIndex === boardIndex + indexLength) {
-          setModalVisible(true);
-        } else {
-          setRenderIndex(renderIndex.filter((index) => (index !== boardIndex + indexLength)));
-          setBoardInfo({
-            ...boardInfo,
-            index: {
-              ...boardInfo.index,
-              rendering: renderIndex.filter((index) => (index !== boardIndex + indexLength)),
-            },
-          });
-        }
-      } else {
-        setRenderIndex([
-          ...renderIndex,
-          boardIndex + indexLength,
-        ]);
-        setBoardInfo({
-          ...boardInfo,
-          index: {
-            ...boardInfo.index,
-            rendering: renderIndex,
-          },
-        });
-      }
-    } else if (layer === 'Private') {
-      if (renderIndex.includes(boardIndex)) {
-        if (writeIndex === boardIndex) {
-          setModalVisible(true);
-        } else {
-          setRenderIndex(renderIndex.filter((index) => (index !== boardIndex)));
-          setBoardInfo({
-            ...boardInfo,
-            index: {
-              ...boardInfo.index,
-              rendering: renderIndex,
-            },
-          });
-        }
-      } else {
-        setRenderIndex([
-          ...renderIndex,
-          boardIndex,
-        ]);
-        setBoardInfo({
-          ...boardInfo,
-          index: {
-            ...boardInfo.index,
-            rendering: renderIndex,
-          },
-        });
-      }
+const layerChoice = ({ boardInfo, setBoardInfo }) => {
+  const boardIndex = boardInfo.index[boardInfo.index.current];
+  const indexLength = boardInfo.urls.length;
+  const renderIndex = boardInfo.index.rendering;
+
+  React.useEffect(() => {
+    console.log(boardInfo.index);
+  }, [boardInfo]);
+
+  const toggleRender = (index) => {
+    let { writing, rendering } = boardInfo.index;
+    if (writing === index) {
+      writing = null;
     }
-    console.log('render',renderIndex);
-  };
-  const toggleWriteLayer = (layer, index) => {
-    if (writeIndex === index) {
-      setWriteIndex(undefined);
-      setBoardInfo({
-        ...boardInfo,
-        index: {
-          ...boardInfo.index,
-          writing: writeIndex,
-        },
-      });
+    if (rendering.includes(index)) {
+      rendering = rendering.filter((i) => i !== index);
     } else {
-      setWriteIndex(layer === 'Private' ? boardIndex : boardIndex + indexLength);
-      setBoardInfo({
-        ...boardInfo,
-        index: {
-          ...boardInfo.index,
-          writing: writeIndex,
-        },
-      });
+      rendering.push(index);
     }
-    console.log('write', writeIndex);
+    setBoardInfo({
+      ...boardInfo,
+      index: {
+        ...boardInfo.index,
+        rendering,
+        writing,
+      },
+    });
   };
+  const toggleWrite = (index) => {
+    const writing = boardInfo.index.writing === index ? null : index;
+    let { rendering } = boardInfo.index;
+    if (writing !== index && rendering.includes(index)) {
+      rendering = rendering.filter((i) => i !== index);
+    } else {
+      rendering.push(index);
+    }
+
+    setBoardInfo({
+      ...boardInfo,
+      index: {
+        ...boardInfo.index,
+        writing,
+        rendering,
+      },
+    });
+  };
+
+  const toggleIndex = (type, index) => {
+    if (type === 'write') toggleWrite(index);
+    else if (type === 'render') toggleRender(index);
+  };
+
+  const [modalVisible, setModalVisible] = useState(false);
+
   const ToggleSwitch = ({ index, onClick }) => (
     <ToggleContainer on={renderIndex.includes(index) ? 1 : 0} onClick={onClick}>
       <ToggleCircle on={renderIndex.includes(index) ? 1 : 0} />
@@ -173,25 +139,30 @@ const layerChoice = ({ boardIndex, indexLength, renderingIndex, boardInfo, setBo
   );
   return (
     <>
-      <Modal visible={modalVisible} onClose={onClose} />
+      <Modal
+        visible={modalVisible}
+        onClose={() => {
+          setModalVisible(false);
+        }}
+      />
       <Wrapper>
         <RowWrapper>
           <ToggleWriteLayer
-            writeIndex={writeIndex}
+            writeIndex={boardInfo.index.writing}
             index={boardIndex + indexLength}
             text="Public"
-            onClick={() => { toggleWriteLayer('Public', boardIndex + indexLength); }}
+            onClick={() => { toggleIndex('write', boardIndex + indexLength); }}
           />
-          <ToggleSwitch index={boardIndex + indexLength} onClick={() => { toggleRenderLayer('Public'); }} />
+          <ToggleSwitch index={boardIndex + indexLength} onClick={() => { toggleIndex('render', boardIndex + indexLength); }} />
         </RowWrapper>
         <RowWrapper>
           <ToggleWriteLayer
-            writeIndex={writeIndex}
+            writeIndex={boardInfo.index.writing}
             index={boardIndex}
             text="Private"
-            onClick={() => { toggleWriteLayer('Public', boardIndex); }}
+            onClick={() => { toggleIndex('write', boardIndex); }}
           />
-          <ToggleSwitch index={boardIndex} onClick={() => { toggleRenderLayer('Private'); }} />
+          <ToggleSwitch index={boardIndex} onClick={() => { toggleIndex('render', boardIndex); }} />
         </RowWrapper>
       </Wrapper>
     </>

@@ -108,7 +108,7 @@ const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo, userInfo }) =>
     <AuthReq />
     <LayerChoice
       boardIndex={boardInfo.index[boardInfo.index.current]}
-      renderingIndex={boardInfo.index.rendering}
+      renderIndex={boardInfo.index.rendering}
       indexLength={boardInfo.urls.length}
       boardInfo={boardInfo}
       setBoardInfo={setBoardInfo}
