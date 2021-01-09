@@ -10,7 +10,7 @@ const MainBoard = ({ boardInfo, penInfo }) => {
 
   const router = useRouter();
   const { boardID } = router.query;
-
+  console.log(boardID);
   const parseCookie = (str) => str
     .split(';')
     .map((v) => v.split('='))

@@ -10,6 +10,7 @@ const Main = () => {
       const {
         data,
       } = await axios.get(`${BACKEND_URL}/api/new_board`, { withCredentials: true });
+      console.log(data);
       router.push(`/board/${data.board}`);
       return data;
     } catch (error) {

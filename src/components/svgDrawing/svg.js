@@ -279,15 +279,6 @@ export class SVGDrawing extends Render {
       this.sendSocket({
         status: "end",
         path_id,
-        board: this.sender.boardID,
-        user: this.sender.sessionID,
-        is_public: true,
-        page: this.id,
-        attr: {
-          ...this.opt,
-          width: this.width,
-          height: this.height,
-        },
         pos: this.currentPath.commands,
       });
     }
@@ -375,12 +366,13 @@ export class SVGDrawings {
 
 export class Sender {
   constructor({boardID, sessionID}) {
-    this.baseURL = 'ws://49.50.167.155:8001';
+    console.log(boardID, sessionID);
+    this.baseURL = 'ws://127.0.0.1:8000';
     this.current = {
       write: new WebSocket(`${this.baseURL}/write/${boardID}/${sessionID}`),
-      delete: new WebSocket(`${this.baseURL}/delete/`),
     };
   }
+  //       // delete: new WebSocket(`${this.baseURL}/delete/`),
   write(data) {
     this.current.write.write(JSON.stringify(data));
   }
