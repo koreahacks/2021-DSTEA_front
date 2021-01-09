@@ -108,18 +108,19 @@ const layerChoice = ({ boardInfo, setBoardInfo }) => {
   };
   const toggleWrite = (index) => {
     const writing = boardInfo.index.writing === index ? null : index;
-    // let { rendering } = boardInfo.index;
-    // if (rendering.includes(index)) {
-    //   rendering = rendering.filter((i) => i !== index);
-    // } else {
-    //   rendering.push(index);
-    // }
+    let { rendering } = boardInfo.index;
+    if (writing !== index && rendering.includes(index)) {
+      rendering = rendering.filter((i) => i !== index);
+    } else {
+      rendering.push(index);
+    }
 
     setBoardInfo({
       ...boardInfo,
       index: {
         ...boardInfo.index,
         writing,
+        rendering,
       },
     });
   };
