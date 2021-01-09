@@ -63,7 +63,7 @@ const Main = () => {
       formData.append('file', file);
       const {
         data,
-      } = await axios.post(`${BACKEND_URL}:${BACKEND_PORT}/api/${boardID}/file_upload`, formData, {
+      } = await axios.post(`${BACKEND_URL}/api/${boardID}/file_upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

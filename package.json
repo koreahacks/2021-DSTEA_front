@@ -4,7 +4,7 @@
   "description": "online every board",
   "main": "index.js",
   "scripts": {
-    "dev": "next -p 3000",
+    "dev": "next -p 8001",
     "build": "next build",
     "start": "next start -p 80",
     "lint": "npx eslint **/*.jsx"
