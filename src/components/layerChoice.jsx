@@ -83,10 +83,6 @@ const layerChoice = ({ boardInfo, setBoardInfo }) => {
   const indexLength = boardInfo.urls.length;
   const renderIndex = boardInfo.index.rendering;
 
-  React.useEffect(() => {
-    console.log(boardInfo.index);
-  }, [boardInfo]);
-
   const toggleRender = (index) => {
     let { writing, rendering } = boardInfo.index;
     if (writing === index) {
