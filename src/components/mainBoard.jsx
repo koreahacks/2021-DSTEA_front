@@ -28,7 +28,7 @@ const MainBoard = ({ boardInfo, penInfo }) => {
         writing: boardInfo.index.writing,
       }, penInfo, {
         boardURL: boardID,
-        sessionID: parseCookie(document.cookie).sessionid,
+        sessionID: document.cookie ? parseCookie(document.cookie).sessionid : '',
       });
     } else {
       drawingRef.current = new SVGDrawings(board.current, 2, {
