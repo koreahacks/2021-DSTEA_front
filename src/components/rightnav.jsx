@@ -105,7 +105,7 @@ const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo, userInfo }) =>
     </PenWrapper>
     {/* <UserStatus></UserStatus> */}
     <LayerChoice
-      boardIndex={boardInfo.index.writing}
+      boardIndex={boardInfo.index[boardInfo.index.current]}
       renderingIndex={boardInfo.index.rendering}
       indexLength={boardInfo.urls.length}
       boardInfo={boardInfo}

@@ -76,7 +76,7 @@ const ToggleWriteLayer = ({ writeIndex, index, onClick, text }) => {
   if (writeIndex === index) {
     return <ToggleWriteContainer on={1} onClick={onClick}>{text}</ToggleWriteContainer>;
   }
-  return <ToggleWriteContainer onClick={onClick}>{text}</ToggleWriteContainer>;
+  return <ToggleWriteContainer on={0} onClick={onClick}>{text}</ToggleWriteContainer>;
 };
 
 const layerChoice = ({ boardIndex, indexLength, renderingIndex, boardInfo, setBoardInfo }) => {
@@ -97,7 +97,7 @@ const layerChoice = ({ boardIndex, indexLength, renderingIndex, boardInfo, setBo
             ...boardInfo,
             index: {
               ...boardInfo.index,
-              rendering: renderIndex,
+              rendering: renderIndex.filter((index) => (index !== boardIndex + indexLength)),
             },
           });
         }
@@ -142,6 +142,7 @@ const layerChoice = ({ boardIndex, indexLength, renderingIndex, boardInfo, setBo
         });
       }
     }
+    console.log('render',renderIndex);
   };
   const toggleWriteLayer = (layer, index) => {
     if (writeIndex === index) {
@@ -163,6 +164,7 @@ const layerChoice = ({ boardIndex, indexLength, renderingIndex, boardInfo, setBo
         },
       });
     }
+    console.log('write', writeIndex);
   };
   const ToggleSwitch = ({ index, onClick }) => (
     <ToggleContainer on={renderIndex.includes(index) ? 1 : 0} onClick={onClick}>
