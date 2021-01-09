@@ -16,20 +16,23 @@ const Main = () => {
   const [boardInfo, setBoardInfo] = useState({
     type: 'none',
     index: {
-      rendering: [0, 5],
+      rendering: [0, 1],
       writing: 0,
       user: 0,
       admin: 1,
       current: 'user',
     },
     urls: [
-      'https://picsum.photos/500/600?random=0',
-      'https://picsum.photos/500/600?random=1',
-      'https://picsum.photos/500/600?random=2',
-      'https://picsum.photos/500/600?random=3',
-      'https://picsum.photos/500/600?random=4',
+      // 'https://picsum.photos/500/600?random=0',
+      // 'https://picsum.photos/500/600?random=1',
+      // 'https://picsum.photos/500/600?random=2',
+      // 'https://picsum.photos/500/600?random=3',
+      // 'https://picsum.photos/500/600?random=4',
     ],
   });
+  React.useEffect(() => {
+    console.log(boardInfo);
+  }, [boardInfo])
   const [penInfo, setPenInfo] = useState({
     type: 'pen',
     'stroke-width': 3,
@@ -57,8 +60,9 @@ const Main = () => {
       type: 'guest',
     },
   ]);
-  const formData = new FormData();
+  
   const fileUpload = async (file) => {
+    const formData = new FormData();
     try {
       const res = await axios.get(`${BACKEND_URL}/api/${boardID}/file_upload`);
       const div = document.createElement('div');
@@ -95,15 +99,19 @@ const Main = () => {
         ) : (
           <div className="main-wrapper">
             <PopUp handleFile={(file) => {
-              alert(file[0].name);
               fileUpload(file[0]).then((res) => {
+                console.log(res);
                 setBoardInfo({
-                  type: file[0].type.substring(12),
-                  urls: [
-                    ...res.pages.sort(),
-                  ].map(x => `${BACKEND_URL}/static/upload/${boardID}/${x}`),
-                  rendering: [0, res.pages.length],
                   ...boardInfo,
+                  type: file[0].type.substring(12),
+                  urls: res.pages.sort().map(x => `${BACKEND_URL}/static/upload/${boardID}/${x}`),
+                  index: {
+                    rendering: [0, res.pages.length],
+                    writing: 0,
+                    user: 0,
+                    admin: 0,
+                    current: 'user',
+                  },
                 });
               }).catch((err) => console.log(err));
             }}
