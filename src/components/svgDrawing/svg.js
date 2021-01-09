@@ -138,7 +138,7 @@ class Render extends SVG {
 }
 
 export class SVGDrawing extends Render {
-  constructor(parent, id, opt = {}) {
+  constructor(parent, id, opt = {}, sender) {
     super(parent, id, opt);
     this.parent = parent;
 
@@ -146,6 +146,8 @@ export class SVGDrawing extends Render {
     this.handleDraw = this.handleDraw.bind(this);
     this.handleEnd = this.handleEnd.bind(this);
     this.throttledrawMove = throttle(this.drawMove, 20);
+
+    this.sender = sender;
   }
   off() {
     if (this.clearMouseListener) {
@@ -192,27 +194,66 @@ export class SVGDrawing extends Render {
       ...this.opt,
     });
     this.pushPath(this.currentPath);
+
+    // drawing start
+    this.sendSocket({
+      "status": "start",
+		  "path_id": this.currentPath.id,
+		  "is_public": true,
+		  "page": this.id,
+		  "attr" : {
+		  	...this.opt,
+	    }
+		});
   }
   drawMove(x, y) {
     if (!this.currentPath) return;
     const position = [x - this.left, y - this.top];
     this.currentPath.pushPoint(position);
     this.update();
+
+    // drawing...
+    this.sendSocket({
+      status: "draw",
+		  path_id: this.currentPath.id,
+		  pos: [position[0] / this.width, position[1] / this.height],
+		});
   }
   drawEnd(e) {
+    // drawing...
+    this.sendSocket({
+      status: "end",
+      path_id: this.currentPath.id,
+      board: this.sender.boardID,
+      user: this.sender.sessionID,
+      is_public: true,
+      page: this.id,
+      attr: {
+        ...this.opt,
+        width: this.width,
+        height: this.height,
+      },
+      pos: this.currentPath.commands,
+    });
     this.currentPath = null;
     this.update();
+  }
+  sendSocket(data) {
+    this.sender.current.write.send(data);
   }
 }
 
 export class SVGDrawings {
   constructor(parent, maxIndex, currIndexs = {'rendering': [0], 'writing': 0}, opt = {}, socketOpt = {boardURL: '', sessionID: ''}) {
+    this.sender = new Sender(socketOpt);
+    // this.sender.setEvent('write', 'send');
+
     this.renderingIndexs = currIndexs['rendering'];
     this.writingIndex = currIndexs['writing'];
     this.maxIndex = maxIndex;
     this.SVGs = [];
     for (let i = 0; i < this.maxIndex; i += 1) {
-      this.SVGs.push(new SVGDrawing(parent, `index_${i}`, opt, socketOpt));
+      this.SVGs.push(new SVGDrawing(parent, `${i}`, opt, this.sender));
     }
 
     this.renderingIndexs.forEach((i) => {
@@ -222,9 +263,9 @@ export class SVGDrawings {
     if (this.writingIndex !== null) {
       this.SVGs[this.writingIndex].on();
     }
-
-    this.sender = new Sender(socketOpt);
-    this.sender.setEvent('write', 'send')
+    this.sender.current.write.onmessage = (e) => {
+      console.log(e);
+    };
   }
   setRenderingIndex(index) {
     const deleteIndex = this.renderingIndexs; // .filter((i) => !index.includes(i));
