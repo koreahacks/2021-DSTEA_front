@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 
-const Popup = ({ children, handleFile, intro, setIntro }) => {
+const Popup = ({ children, handleFile, intro, setIntro, loadState, setLoadState }) => {
   const dragWrapper = useRef();
   const defaultBehavior = (e) => {
     e.preventDefault();
@@ -14,6 +14,8 @@ const Popup = ({ children, handleFile, intro, setIntro }) => {
     defaultBehavior(e);
     setIntro(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      // setIntro(false); - finished
+      setLoadState('loading');
       handleFile(e.dataTransfer.files);
       e.dataTransfer.clearData();
     }
@@ -30,12 +32,32 @@ const Popup = ({ children, handleFile, intro, setIntro }) => {
   const handleDragIn = (e) => {
     defaultBehavior(e);
     if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
-      setIntro(true);
       const { current } = dragWrapper;
       current.addEventListener('dragleave', handleDragOut);
       current.addEventListener('dragover', handleDrag);
       current.addEventListener('drop', handleDrop);
     }
+  };
+
+  const Content = () => {
+    if (loadState === 'waiting') {
+      return (
+        <div
+          className="popup"
+        >
+          <p align="center" className="text">
+            {'To upload file, Drag & Drop it'}
+            <br></br>
+            {'You can click the board to start without file'}
+          </p>
+          <img src="/dnd.svg" alt="Drag And Drop The File" />
+        </div>
+      );
+    }
+    if (loadState === 'loading') {
+      return (<div id="loading" />);
+    }
+    return null;
   };
 
   return (
@@ -49,17 +71,13 @@ const Popup = ({ children, handleFile, intro, setIntro }) => {
         {intro
           ? (
             <>
-              <div
-                className="popup"
-              >
-                <p align="center" className="text">
-                  {'To upload file, Drag & Drop it'}
-                  <br></br>
-                  {'You can click the board to start without file'}
-                </p>
-                <img src="/dnd.svg" alt="Drag And Drop The File" />
-              </div>
-              <div className="popup" onDrop={handleDrop} onClick={() => setIntro(false)} />
+              <Content />
+              {/* <div className="popup" onDrop={handleDrop} onClick={() => setIntro(false)} /> */}
+              <div className="popup" onDrop={handleDrop} onClick={() => {
+                //setIntro(false);
+                setLoadState('loading');
+              }}
+              />
             </>
           )
           : null}
@@ -72,6 +90,31 @@ const Layout = styled.div`
   height: 100%;
   width: auto;
   flex-grow: 1;
+
+  @import url(https://fonts.googleapis.com/css?family=Roboto:100);
+
+
+  #loading {
+    display: inline-block;
+    position: relative;
+    width: 50px;
+    height: 50px;
+    left: calc(50% - 25px);
+    top: calc(50% - 40px);
+    border: 5px solid #c3e7ff;
+    border-radius: 50%;
+    border-top-color: #5eb9f5;
+    animation: spin 1s ease-in-out infinite;
+    -webkit-animation: spin 1s ease-in-out infinite;
+  }
+
+  @keyframes spin {
+    to { -webkit-transform: rotate(360deg); }
+  }
+  @-webkit-keyframes spin {
+    to { -webkit-transform: rotate(360deg); }
+  }
+
   .drag-wrapper {
     position: absolute;
     top: 0px;
