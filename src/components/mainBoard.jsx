@@ -5,27 +5,26 @@ const MainBoard = ({ boardInfo, penInfo }) => {
   // 차후 svgdrawing에 사용할 ref
   const board = useRef();
   // const drawingRef = useRef();
-  const a = 1;
   return (
     <Layout>
       <svg
         ref={board}
       >
-        <g className="background">
-          <Pattern src={boardInfo.urls[boardInfo.index.write]} />
-          <rect width="100%" height="100%" fill={`url(#${boardInfo.urls[boardInfo.index.private]})`} />
-        </g>
+        <Background src={boardInfo.urls[boardInfo.index.writing]} />
       </svg>
     </Layout>
   );
 };
 
-const Pattern = ({ src }) => (
-  <defs>
-    <pattern id={src} patternUnits="userSpaceOnUse" width="100%" height="100%">
-      <image xlinkHref={src} x="0" y="0" width="100%" height="100%" />
-    </pattern>
-  </defs>
+const Background = ({ src }) => (
+  <g className="background">
+    <defs>
+      <pattern id={src} patternUnits="userSpaceOnUse" width="100%" height="100%">
+        <image xlinkHref={src} x="0" y="0" width="100%" height="100%" />
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill={`url(#${src})`} />
+  </g>
 );
 
 const Layout = styled.div`
