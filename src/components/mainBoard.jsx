@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import { SVGDrawings, SVGDrawing } from 'src/components/svgDrawing/svg';
+import { SVGDrawings, SVGDrawing, Sender } from 'src/components/svgDrawing/svg';
 
 const MainBoard = ({ boardInfo, penInfo }) => {
   // 차후 svgdrawing에 사용할 ref
@@ -15,12 +15,13 @@ const MainBoard = ({ boardInfo, penInfo }) => {
         writing: boardInfo.index.writing,
       }, penInfo);
     } else {
-      drawingRef.current = new SVGDrawing(board.current, penInfo);
+      drawingRef.current = new SVGDrawing(board.current, 0, penInfo, new Sender({ boardID: 'board', sessionID: 'session' }));
+      drawingRef.current.create();
       drawingRef.current.on();
     }
   });
   useEffect(() => {
-    console.log(boardInfo.index);
+    // console.log(boardInfo.index);
     if (boardInfo && boardInfo.index) {
       drawingRef.current.setRenderingIndex(boardInfo.index.rendering);
       drawingRef.current.setWritingIndex(boardInfo.index.writing);

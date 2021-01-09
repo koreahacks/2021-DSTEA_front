@@ -89,7 +89,7 @@ class SVG {
   }
   toPaths(id) {
     const g = document.createElementNS(SVG_NS, 'g');
-    if (id) {
+    if (id !== null || id !== undefined) {
       g.setAttribute('id', String(id));
     }
     this.paths.forEach((p) => {
@@ -126,6 +126,7 @@ class Render extends SVG {
     }
   }
   create() {
+    console.log(this.toPaths(this.id));
     this.parent.appendChild(this.toPaths(this.id));
   }
   reSize() {
@@ -220,6 +221,8 @@ export class SVGDrawing extends Render {
 		});
   }
   drawEnd(e) {
+    if (!this.currentPath) return;
+
     // drawing...
     this.sendSocket({
       status: "end",
@@ -239,7 +242,8 @@ export class SVGDrawing extends Render {
     this.update();
   }
   sendSocket(data) {
-    this.sender.current.write.send(data);
+    console.log(data);
+    // this.sender.current.write.send(data);
   }
 }
 
@@ -302,9 +306,9 @@ export class SVGDrawings {
   }
 }
 
-class Sender {
+export class Sender {
   constructor({boardID, sessionID}) {
-    this.baseURL = 'http://49.50.167.155:8001';
+    this.baseURL = 'ws://49.50.167.155:8001';
     this.current = {
       write: new WebSocket(`${this.baseURL}/${boardID}/${sessionID}`),
       delete: new WebSocket(`${this.baseURL}/delete/`),
