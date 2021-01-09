@@ -11,7 +11,11 @@ const SVG_NS = 'http://www.w3.org/2000/svg';
 export class Path {
   constructor({ d, ...attrs }) {
     this.attrs = attrs;
-    this.id = uuidv4();
+    if (!Object.keys({...attrs}).includes('id')) {
+      this.id = uuidv4();
+    } else {
+      this.id = attrs.id;
+    }
     if (d) {
       this.commands = d;
     } else {
@@ -149,6 +153,7 @@ export class SVGDrawing extends Render {
     this.throttledrawMove = throttle(this.drawMove, 20);
 
     this.sender = sender;
+    this.currentPaths = {};
   }
   off() {
     if (this.clearMouseListener) {
@@ -187,19 +192,26 @@ export class SVGDrawing extends Render {
   }
   handleEnd(e) {
     e.preventDefault();
-    this.drawEnd(e);
+    this.drawEnd();
   }
-  drawStart() {
-    this.currentPath = new Path({
+  drawStart(pathId) {
+    const pathInfo = {
       fill: "none",
       ...this.opt,
-    });
-    this.pushPath(this.currentPath);
+    };
+    if (pathId === undefined || pathId === null) {
+      this.currentPath = new Path(pathInfo);
+      this.pushPath(this.currentPath);
+    } else {
+      pathInfo.id = pathId;
+      this.currentPaths[pathId] = new Path(pathInfo);
+      this.pushPath(this.currentPaths[pathId]);
+    }
 
     // drawing start
     this.sendSocket({
       "status": "start",
-		  "path_id": this.currentPath.id,
+		  "path_id": pathId || this.currentPath.id,
 		  "is_public": true,
 		  "page": this.id,
 		  "attr" : {
@@ -207,10 +219,15 @@ export class SVGDrawing extends Render {
 	    }
 		});
   }
-  drawMove(x, y) {
+
+  drawMove(x, y, pathId) {
     if (!this.currentPath) return;
     const position = [x - this.left, y - this.top];
-    this.currentPath.pushPoint(position);
+    if (pathId === undefined || pathId == null) {
+      this.currentPath.pushPoint(position);
+    } else {
+      this.currentPaths[pathId].pushPoint(position);
+    }
     this.update();
 
     // drawing...
@@ -220,13 +237,15 @@ export class SVGDrawing extends Render {
 		  pos: [position[0] / this.width, position[1] / this.height],
 		});
   }
-  drawEnd(e) {
-    if (!this.currentPath) return;
 
-    // drawing...
+  drawEnd(pathID = undefined) {
+    if (pathID === undefined && (this.currentPath === undefined || this.currentPath === null)) return;
+    else if (pathID !== undefined && this.currentPaths[pathID] === undefined) return;
+    const path_id = pathID !== undefined ? pathId : this.currentPath.id;
+
     this.sendSocket({
       status: "end",
-      path_id: this.currentPath.id,
+      path_id: path_id,
       board: this.sender.boardID,
       user: this.sender.sessionID,
       is_public: true,
@@ -243,7 +262,7 @@ export class SVGDrawing extends Render {
   }
   sendSocket(data) {
     console.log(data);
-    // this.sender.current.write.send(data);
+    this.sender.current.write.send(data);
   }
 }
 
@@ -268,12 +287,25 @@ export class SVGDrawings {
       this.SVGs[this.writingIndex].on();
     }
     this.sender.current.write.onmessage = (e) => {
-      console.log(e);
+      const data = JSON.parse(e.data);
+      const { status, path_id, page, pos } = data;
+      if (status === 'start') {
+        const { page } = data;
+        this.SVGs[page].drawStart(path_id);
+      } else if (status === 'draw') {
+        this.SVGs[page].drawMove(pos[0] * this.SVGs[page].width, pos[1] * this.SVGs[page].height, path_id);
+      } else if (status === 'end') {
+        this.SVGs[page].drawEnd(path_id);
+      } else {
+        console.log(`error on ${status}`);
+      }
     };
   }
   setRenderingIndex(index) {
     const deleteIndex = this.renderingIndexs; // .filter((i) => !index.includes(i));
     const createIndex = index; // .filter((i) => !this.renderingIndexs.includes(i))
+    console.log(deleteIndex);
+    console.log(createIndex);
     deleteIndex.forEach((i) => {
       this.SVGs[i].delete();
     });

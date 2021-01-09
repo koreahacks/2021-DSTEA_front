@@ -13,12 +13,12 @@ const Main = () => {
   const navbar = useRef();
 
   const [boardInfo, setBoardInfo] = useState({
-    type: 'none',
+    type: 'ppt',
     index: {
-      rendering: [0, 5],
+      rendering: [0, 1],
       writing: 0,
       user: 0,
-      admin: 1,
+      admin: 0,
       current: 'user',
     },
     urls: [
@@ -76,6 +76,7 @@ const Main = () => {
             }}
             >
               <MainBoard
+                boardInfo={boardInfo}
                 penInfo={penInfo}
               />
             </PopUp>

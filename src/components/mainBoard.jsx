@@ -9,15 +9,19 @@ const MainBoard = ({ boardInfo, penInfo }) => {
   useEffect(() => {
     if (drawingRef.current) return;
     if (!board.current) return;
-    if (boardInfo && boardInfo.urls) {
+    if (boardInfo && boardInfo.type !== 'none') {
       drawingRef.current = new SVGDrawings(board.current, boardInfo.urls.length * 2, {
         rendering: boardInfo.index.rendering,
         writing: boardInfo.index.writing,
       }, penInfo);
     } else {
-      drawingRef.current = new SVGDrawing(board.current, 0, penInfo, new Sender({ boardID: 'board', sessionID: 'session' }));
-      drawingRef.current.create();
-      drawingRef.current.on();
+      drawingRef.current = new SVGDrawings(board.current, 2, {
+        rendering: boardInfo.index.rendering,
+        writing: boardInfo.index.writing,
+      }, penInfo);
+      // drawingRef.current = new SVGDrawings(board.current, 0, penInfo, new Sender({ boardID: 'board', sessionID: 'session' }));
+      // drawingRef.current.create();
+      // drawingRef.current.on();
     }
   });
   useEffect(() => {
@@ -39,7 +43,7 @@ const MainBoard = ({ boardInfo, penInfo }) => {
       <svg
         ref={board}
       >
-        {boardInfo && <Background src={boardInfo.urls[boardInfo.index[boardInfo.index.current]]} />}
+        {boardInfo && boardInfo.type !== 'none' && <Background src={boardInfo.urls[boardInfo.index[boardInfo.index.current]]} />}
       </svg>
     </Layout>
   );
