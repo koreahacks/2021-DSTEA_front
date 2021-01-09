@@ -7,14 +7,14 @@ import LeftNav from 'src/components/leftnav';
 import PopUp from 'src/components/popup';
 import RightNav from 'src/components/rightnav';
 import axios from 'axios';
-import {BACKEND_URL, BACKEND_PORT} from 'config';
+import { BACKEND_URL, BACKEND_PORT } from 'config';
 
 const Main = () => {
   const router = useRouter();
   const { boardID } = router.query;
   const navbar = useRef();
   const [boardInfo, setBoardInfo] = useState({
-    type: 'ppt',
+    type: 'none',
     index: {
       rendering: [0, 5],
       writing: 0,
@@ -57,7 +57,23 @@ const Main = () => {
       type: 'guest',
     },
   ]);
-
+  const formData = new FormData();
+  const fileUpload = async (file) => {
+    try {
+      formData.append('file', file);
+      const {
+        data,
+      } = await axios.post(`${BACKEND_URL}:${BACKEND_PORT}/api/${boardID}/file_upload`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return data;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+  };
   return (
     <Layout>
       <Header />
@@ -74,9 +90,16 @@ const Main = () => {
           <div className="main-wrapper">
             <PopUp handleFile={(file) => {
               alert(file[0].name);
-              axios.post(`${BACKEND_URL}:${BACKEND_PORT}/${boardID}/file_upload`, {
-                
-              });
+              fileUpload(file[0]).then((res) => {
+                setBoardInfo({
+                  type: file[0].type.substring(12),
+                  urls: [
+                    ...res.pages.sort(),
+                  ],
+                  rendering: [0, res.pages.length],
+                  ...boardInfo,
+                });
+              }).catch((err) => console.log(err));
             }}
             >
               <MainBoard
