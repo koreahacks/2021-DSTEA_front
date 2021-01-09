@@ -241,10 +241,11 @@ export class SVGDrawings {
     }
     this.writingIndex = index;
 
-    if (!index) return;
-    this.SVGs[index].delete();
-    this.SVGs[index].create();
-    this.SVGs[index].on();
+    if (index !== null) {
+      this.SVGs[index].delete();
+      this.SVGs[index].create();
+      this.SVGs[index].on();
+    }
   }
   setOpt(opt) {
     for (let i = 0; i < this.maxIndex; i += 1) {
@@ -253,7 +254,7 @@ export class SVGDrawings {
   }
   getIndex() {
     console.log('current write:', this.writingIndex);
-    console.log('current render:', this.renderingIndexs)
+    console.log('current render:', this.renderingIndexs);
   }
 }
 

@@ -31,7 +31,7 @@ const sidenav = ({ boardInfo, setBoardInfo, navbar }) => {
   };
   const setIndex = (index) => {
     const interval = (index - boardInfo.index[boardInfo.index.current] % len)
-    const writing = boardInfo.index.writing + interval;
+    const writing = boardInfo.index.writing ? boardInfo.index.writing + interval : null;
     const rendering = boardInfo.index.rendering.map((i) => {
       return i + interval;
     });
