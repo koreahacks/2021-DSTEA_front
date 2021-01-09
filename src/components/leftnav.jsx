@@ -3,18 +3,23 @@ import styled from 'styled-components';
 
 const sidenav = ({ boardInfo, setBoardInfo, navbar }) => {
   const len = boardInfo.urls.length;
-  const [navWidth, setNavWidth] = useState(200);
-  const threshold = 140;
+  const [navWidth, setNavWidth] = useState(160);
+  const minWidth = 140, maxWidth = 190;
+
   const resize = (e) => {
     e.preventDefault();
     const newWidth = e.clientX - navbar.current.offsetLeft;
-    setNavWidth(newWidth);
+    if (newWidth > maxWidth) {
+      setNavWidth(maxWidth);
+    } else {
+      setNavWidth(newWidth);
+    }
   };
   const stopResize = (e) => {
     const newWidth = e.clientX - navbar.current.offsetLeft;
-    if (newWidth < threshold) {
-      setNavWidth(0);
-    }
+    if (newWidth < minWidth) {
+        setNavWidth(0);
+      }
     navbar.current.removeEventListener('mousemove', resize, false);
     navbar.current.removeEventListener('mouseup', stopResize, false);
     navbar.current.removeEventListener('mouseleave', stopResize, false);
@@ -25,7 +30,7 @@ const sidenav = ({ boardInfo, setBoardInfo, navbar }) => {
     navbar.current.addEventListener('mouseleave', stopResize, false);
   };
   const setIndex = (index) => {
-    const interval = (index - boardInfo.index.writing % len)
+    const interval = (index - boardInfo.index[boardInfo.index.current] % len)
     const writing = boardInfo.index.writing + interval;
     const rendering = boardInfo.index.rendering.map((i) => {
       return i + interval;
@@ -37,6 +42,7 @@ const sidenav = ({ boardInfo, setBoardInfo, navbar }) => {
         writing,
         rendering,
         user: index,
+        current: 'user',
       },
     });
   };
