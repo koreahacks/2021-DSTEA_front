@@ -1,11 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import ColorSelector from 'src/components/colorSelector';
-<<<<<<< HEAD
 import LayerChoice from 'src/components/layerChoice';
-=======
 import UserStatus from 'src/components/userStatus';
->>>>>>> 65162d84a053f71f6fc461a799a79ae6cab84609
 
 const SHAPE_BORDER = '0.8px solid #000000';
 const BOX_BORDER = '1px solid #000000';
@@ -108,7 +105,7 @@ const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo, userInfo }) =>
     </PenWrapper>
     {/* <UserStatus></UserStatus> */}
     <LayerChoice
-      boardIndex={boardInfo.index.writing}
+      boardIndex={boardInfo.index[boardInfo.index.current]}
       renderingIndex={boardInfo.index.rendering}
       indexLength={boardInfo.urls.length}
       boardInfo={boardInfo}
