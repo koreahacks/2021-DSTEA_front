@@ -4,13 +4,14 @@ import styled from 'styled-components';
 const MainBoard = ({ boardInfo, penInfo }) => {
   // 차후 svgdrawing에 사용할 ref
   const board = useRef();
+  const len = boardInfo.urls.length;
   // const drawingRef = useRef();
   return (
     <Layout>
       <svg
         ref={board}
       >
-        <Background src={boardInfo.urls[boardInfo.index.writing]} />
+        <Background src={boardInfo.urls[boardInfo.index.writing % len]} />
       </svg>
     </Layout>
   );
