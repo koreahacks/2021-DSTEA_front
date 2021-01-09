@@ -7,7 +7,7 @@ import LeftNav from 'src/components/leftnav';
 import PopUp from 'src/components/popup';
 import RightNav from 'src/components/rightnav';
 import axios from 'axios';
-import { BACKEND_URL, BACKEND_PORT } from 'config';
+import { BACKEND_URL } from 'config';
 
 const Main = () => {
   const router = useRouter();
@@ -60,14 +60,20 @@ const Main = () => {
   const formData = new FormData();
   const fileUpload = async (file) => {
     try {
+      const res = await axios.get(`${BACKEND_URL}/api/${boardID}/file_upload`);
+      const div = document.createElement('div');
+      div.innerHTML = res.data.trim();
+      const csrf = div.firstChild.getAttribute('value');
+
       formData.append('file', file);
       const {
         data,
       } = await axios.post(`${BACKEND_URL}/api/${boardID}/file_upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          'X-CSRFToken': csrf,
         },
-      });
+      }, { withCredentials: true });
       return data;
     } catch (err) {
       console.log(err);
