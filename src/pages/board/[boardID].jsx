@@ -71,6 +71,8 @@ const Main = () => {
         <RightNav
           penInfo={penInfo}
           setPenInfo={setPenInfo}
+          boardInfo={boardInfo}
+          setBoardInfo={setBoardInfo}
           userInfo={userInfo}
         />
         {/* <RightNav></RightNav> */}

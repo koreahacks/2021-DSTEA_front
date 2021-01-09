@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const Wrapper = styled.div`
-  position: abolute;
+  width: 170px;
+  position: absolute;
   bottom: 50px;
-  padding: 10px 30px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  right: 15px;
+  z-index: 2;
 `;
 const RowWrapper = styled.div`
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -32,18 +32,29 @@ const ToggleCircle = styled.div`
   border-radius: 15px;
   padding: 5px;
   background-color: #ffffff;
-  transition: all 0.2s ease-out;
+  transition: all 0.3s ease-out;
   ${(props) => props.on && css`
     transform: translateX(10px);
   `};
 `;
 const ToggleWriteContainer = styled.span`
   cursor: pointer;
+  ${(props) => props.on && css`
+    color: #5eb9f5;
+  `};
 `;
 
 const Modal = ({ visible, onClose }) => {
   const Div = styled.div`
+    width: 300px;
+    height: 100px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
     display: flex;
+    z-index: 3;
+    background-color: #ffffff;
+    border-radius: 4px;
   `;
   const Button = styled.button`
     border-radius: 4px;
@@ -52,26 +63,25 @@ const Modal = ({ visible, onClose }) => {
   `;
   return (
     visible && (
-    <>
       <Div>
-        Can&apos;t do that
+        <div>Can&apos;t do that</div>
+        <Button onClick={onClose}>close</Button>
       </Div>
-      <Button onClick={onClose}>close</Button>
-    </>
+
     )
   );
 };
 
 const ToggleWriteLayer = ({ writeIndex, index, onClick, text }) => {
   if (writeIndex === index) {
-    return <ToggleWriteContainer onClick={onClick}>{text}</ToggleWriteContainer>;
+    return <ToggleWriteContainer on={1} onClick={onClick}>{text}</ToggleWriteContainer>;
   }
   return <ToggleWriteContainer onClick={onClick}>{text}</ToggleWriteContainer>;
 };
 
-const layerChoice = ({ boardIndex, user, indexLength }) => {
+const layerChoice = ({ boardIndex, indexLength, renderingIndex, boardInfo, setBoardInfo }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [renderIndex, setRenderIndex] = useState([]);
+  const [renderIndex, setRenderIndex] = useState(renderingIndex);
   const [writeIndex, setWriteIndex] = useState(boardIndex);
   const onClose = () => {
     setModalVisible(false);
@@ -83,12 +93,26 @@ const layerChoice = ({ boardIndex, user, indexLength }) => {
           setModalVisible(true);
         } else {
           setRenderIndex(renderIndex.filter((index) => (index !== boardIndex + indexLength)));
+          setBoardInfo({
+            ...boardInfo,
+            index: {
+              ...boardInfo.index,
+              rendering: renderIndex,
+            },
+          });
         }
       } else {
         setRenderIndex([
           ...renderIndex,
           boardIndex + indexLength,
         ]);
+        setBoardInfo({
+          ...boardInfo,
+          index: {
+            ...boardInfo.index,
+            rendering: renderIndex,
+          },
+        });
       }
     } else if (layer === 'Private') {
       if (renderIndex.includes(boardIndex)) {
@@ -96,27 +120,53 @@ const layerChoice = ({ boardIndex, user, indexLength }) => {
           setModalVisible(true);
         } else {
           setRenderIndex(renderIndex.filter((index) => (index !== boardIndex)));
+          setBoardInfo({
+            ...boardInfo,
+            index: {
+              ...boardInfo.index,
+              rendering: renderIndex,
+            },
+          });
         }
       } else {
         setRenderIndex([
           ...renderIndex,
           boardIndex,
         ]);
+        setBoardInfo({
+          ...boardInfo,
+          index: {
+            ...boardInfo.index,
+            rendering: renderIndex,
+          },
+        });
       }
     }
   };
-  const toggleWriteLayer = (layer) => {
-    if (writeIndex === boardIndex) {
+  const toggleWriteLayer = (layer, index) => {
+    if (writeIndex === index) {
       setWriteIndex(undefined);
-    } else if (writeIndex === boardIndex + indexLength) {
-      setWriteIndex(undefined);
+      setBoardInfo({
+        ...boardInfo,
+        index: {
+          ...boardInfo.index,
+          writing: writeIndex,
+        },
+      });
     } else {
       setWriteIndex(layer === 'Private' ? boardIndex : boardIndex + indexLength);
+      setBoardInfo({
+        ...boardInfo,
+        index: {
+          ...boardInfo.index,
+          writing: writeIndex,
+        },
+      });
     }
   };
-  const ToggleSwitch = ({ layer, onClick }) => (
-    <ToggleContainer on={layer === 'Public' && renderIndex.includes(boardIndex + indexLength) ? 1 : 0} onClick={onClick}>
-      <ToggleCircle on={layer === 'Public' && renderIndex.includes(boardIndex + indexLength) ? 1 : 0} />
+  const ToggleSwitch = ({ index, onClick }) => (
+    <ToggleContainer on={renderIndex.includes(index) ? 1 : 0} onClick={onClick}>
+      <ToggleCircle on={renderIndex.includes(index) ? 1 : 0} />
     </ToggleContainer>
   );
   return (
@@ -124,12 +174,22 @@ const layerChoice = ({ boardIndex, user, indexLength }) => {
       <Modal visible={modalVisible} onClose={onClose} />
       <Wrapper>
         <RowWrapper>
-          <ToggleWriteLayer writeIndex={writeIndex} index={boardIndex + indexLength} text="Public" onClick={() => { toggleWriteLayer('Public'); }} />
-          <ToggleSwitch layer="Public" onClick={() => { toggleRenderLayer('Public'); }} />
+          <ToggleWriteLayer
+            writeIndex={writeIndex}
+            index={boardIndex + indexLength}
+            text="Public"
+            onClick={() => { toggleWriteLayer('Public', boardIndex + indexLength); }}
+          />
+          <ToggleSwitch index={boardIndex + indexLength} onClick={() => { toggleRenderLayer('Public'); }} />
         </RowWrapper>
         <RowWrapper>
-          <ToggleWriteLayer writeIndex={writeIndex} index={boardIndex} text="Private" onClick={() => { toggleWriteLayer('Private'); }} />
-          <ToggleSwitch layer="Private" onClick={() => { toggleRenderLayer('Private'); }} />
+          <ToggleWriteLayer
+            writeIndex={writeIndex}
+            index={boardIndex}
+            text="Private"
+            onClick={() => { toggleWriteLayer('Public', boardIndex); }}
+          />
+          <ToggleSwitch index={boardIndex} onClick={() => { toggleRenderLayer('Private'); }} />
         </RowWrapper>
       </Wrapper>
     </>
