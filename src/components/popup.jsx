@@ -47,15 +47,19 @@ const Popup = ({ children, handleFile, intro, setIntro, loadState, setLoadState 
           >
             <p align="center" className="text">
               {'To upload file, Drag & Drop it'}
-              <br></br>
+              <br />
               {'You can click the board to start without file'}
             </p>
             <img src="/dnd.svg" alt="Drag And Drop The File" />
           </div>
-          <div className="popup" onDrop={handleDrop} onClick={() => {
-            setIntro(false);
-            setLoadState('complete');
-          }} />
+          <div
+            className="popup"
+            onDrop={handleDrop}
+            onClick={() => {
+              setIntro(false);
+              setLoadState('complete');
+            }}
+          />
         </>
       );
     }
@@ -72,9 +76,7 @@ const Popup = ({ children, handleFile, intro, setIntro, loadState, setLoadState 
         ref={dragWrapper}
         onDragEnter={handleDragIn}
       >
-
-      <Content />
-          
+        <Content />
       </div>
     </Layout>
   );
