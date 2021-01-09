@@ -17,7 +17,7 @@ const Main = () => {
   const [boardInfo, setBoardInfo] = useState({
     type: 'ppt',
     index: {
-      rendering: [0, 5],
+      rendering: [0, 1],
       writing: 0,
       user: 0,
       admin: 0,
