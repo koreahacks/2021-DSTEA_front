@@ -48,6 +48,10 @@ const ColorBox = styled.div`
   border: ${BOX_BORDER};
   border-radius: ${BORDER_RADIUS};
   box-shadow: rgba(0, 0, 0, 0.1) 0 6px 9px 0;
+  :active {
+    outline: none;
+    border: 2px solid #c0c0c0;
+  }
 `;
 
 // const PencilIcon = () => (
@@ -138,7 +142,7 @@ const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo, userInfo }) =>
       <ColorBox><ColorSelector penInfo={penInfo} setPenInfo={setPenInfo} /></ColorBox>
     </PenWrapper>
     {/* <UserStatus></UserStatus> */}
-    <AuthReq />
+    <AuthReq user={userInfo[2]} />
     <LayerChoice
       boardIndex={boardInfo.index[boardInfo.index.current]}
       renderIndex={boardInfo.index.rendering}

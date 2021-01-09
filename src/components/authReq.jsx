@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
+import { BACKEND_URL, BACKEND_PORT } from 'config';
+import axios from 'axios';
 
 const PopUp = styled.div`
     position: fixed;
@@ -43,31 +45,46 @@ const PopUpButton = styled.button`
 `;
 
 const Container = styled.button`
-    border-radius: 5px;
-    border: 1px solid red;
+    position: absolute;
+    bottom: 85px;
+    right: 18px;
+    padding: 5px 5px;
+    background-color: #f0f0f0; /**/
+    outline: none;
+    border: none;
     align-items: center;
     text-align: center;
+    box-shadow: rgba(0, 0, 0, 0.09) 0 6px 9px 0;
     cursor: pointer;
     ${(props) => props.isAuthorized === true && css`
-        background-color: green;
+        background-color: #86ff86;
     `};
     ${(props) => props.isAuthorized === false && css`
-        background-color: red;
+        background-color: #ff8686;
     `};
+    :active {
+        outline: none;
+        background-color: #e8e8e8;
+    }
 `;
 
 const AuthReqPopUp = ({ nickname, id }) => {
-  const [visible, setVisible] = useState(false);
-  const onClick = (text) => {
+  const [visible, setVisible] = useState(true);
+  const onClick = () => {
     // request something
+    // {
+    // "board": "board_id",  url에서 가져옴
+    // "user": "session_id", cookie에서 가져옴
+    // "accept": True, # False
+    // }
     setVisible(false);
   };
   return (
     visible && (
     <PopUp index={id}>
       <PopUpText><Bold>{nickname}</Bold> requested an authority.</PopUpText> {/* user.nickname */}
-      <PopUpButton onClick={() => onClick('Yes')}>Yes</PopUpButton>
-      <PopUpButton onClick={() => onClick('No')}>No</PopUpButton>
+      <PopUpButton onClick={() => onClick(true)}>Yes</PopUpButton>
+      <PopUpButton onClick={() => onClick(false)}>No</PopUpButton>
     </PopUp>
     )
   );
@@ -77,8 +94,8 @@ const Button = ({ isAuthorized, onClick, text }) => <Container isAuthorized={isA
 
 const AuthReqButton = ({ isAuthorized, onClick, text }) => <Button isAuthorized={isAuthorized} onClick={onClick} text={text} />;
 
-const AuthWindow = () => {
-  const [isAdmin, setIsAdmin] = useState(false);
+const AuthWindow = ({ user }) => {
+  // const [isAdmin, setIsAdmin] = useState(user.type);
   const [isAuthorized, setIsAuthorized] = useState(undefined);
   const [authReqUser, setAuthReqUser] = useState({
     users: [
@@ -87,17 +104,11 @@ const AuthWindow = () => {
     ],
   });
 
-  const reqAuthority = () => {
-    // send request
-    // 테스트로 setIsAuthorized 씀
-    setIsAuthorized(!isAuthorized);
-  };
-
   return (
     <>
       {
-        isAdmin ? (authReqUser.users.map((user) => <AuthReqPopUp key={user.id} id={user.id} nickname={user.nickname} />))
-          : (<AuthReqButton isAuthorized={isAuthorized} onClick={() => reqAuthority()} text={'권한 신청'} />)
+        user.type === 'admin' ? (authReqUser.users.map((user) => <AuthReqPopUp key={user.id} id={user.id} nickname={user.nickname} />))
+          : (<AuthReqButton isAuthorized={isAuthorized} onClick={() => reqAuthority(boardID)} text={'Request Authority'} />)
       }
     </>
   );
