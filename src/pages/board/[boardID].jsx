@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
+
+import RightNav from 'src/components/rightnav';
 
 const Main = () => {
   const router = useRouter();
   const { boardID } = router.query;
+  const [penInfo, setPenInfo] = useState({
+    'stroke-width': 3,
+    stroke: 'rgba(132, 228, 247, 1.0)',
+  });
 
   return (
     <Layout>
@@ -12,7 +18,10 @@ const Main = () => {
       <section>
         {/* <LeftNav></LeftNav> */}
         {/* <MainBoard></MainBoard> */}
-        {/* <RightNav></RightNav> */}
+        <RightNav
+          penInfo={penInfo}
+          setPenInfo={setPenInfo}
+        />
       </section>
     </Layout>
   );
