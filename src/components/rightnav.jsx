@@ -96,7 +96,7 @@ const RectIcon = styled.div`
     cursor: pointer;
 `;
 
-const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo, userInfo, boardID }) => (
+const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo, userInfo, boardID, sessionid }) => (
   <RightNav>
     <PenWrapper>
       <PenBox onClick={() => {
@@ -132,7 +132,7 @@ const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo, userInfo, boar
       <ColorBox><ColorSelector penInfo={penInfo} setPenInfo={setPenInfo} /></ColorBox>
     </PenWrapper>
     {/* <UserStatus></UserStatus> */}
-    <AuthReq user={userInfo[2]} boardID={boardID} sessionid={} />
+    <AuthReq user={userInfo[2]} boardID={boardID} sessionid={sessionid} />
     <LayerChoice
       boardIndex={boardInfo.index[boardInfo.index.current]}
       renderIndex={boardInfo.index.rendering}

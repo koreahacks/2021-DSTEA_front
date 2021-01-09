@@ -41,34 +41,47 @@ const Main = () => {
   });
 
   const [userInfo, setUserInfo] = useState([
-    {
-      username: 'ReactkingKojin',
-      type: 'admin',
-    }, {
-      username: 'BbanjowholovesJW',
-      type: 'manager',
-    }, {
-      username: 'DesignSlaveUKth',
-      type: 'guest',
-    }, {
-      username: 'ToeicKing Taeho',
-      type: 'guest',
-    }, {
-      username: 'L0Z1KtheCB_Lover',
-      type: 'guest',
-    }, {
-      username: 'ComputerInstallerHanch',
-      type: 'guest',
-    },
+  //  {
+  //    username: 'ReactkingKojin',
+  //    type: 'admin',
+  //  }, {
+  //    username: 'BbanjowholovesJW',
+  //    type: 'manager',
+  //  }, {
+  //    username: 'DesignSlaveUKth',
+  //    type: 'guest',
+  //  }, {
+  //    username: 'ToeicKing Taeho',
+  //    type: 'guest',
+  //  }, {
+  //    username: 'L0Z1KtheCB_Lover',
+  //    type: 'guest',
+  //  }, {
+  //    username: 'ComputerInstallerHanch',
+  //    type: 'guest',
+  //  },
   ]);
-
+  let sessionid = "";
   const [loadState, setLoadState] = useState("waiting");
 
-  const getUserInfo = async () => {
+  const getUsersInfo = async () => {
     try {
-      const res = await axios.get(`${BACKEND_URL}/api/${boardID}`);
-      console.log('getuser', res);
-      return res;
+      const {
+        data,
+      } = await axios.get(`${BACKEND_URL}/api/${boardID}/user`, { withCredentials: true });
+      console.log('getusers', data);
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getMyInfo = async () => {
+    try {
+      const {
+        data,
+      } = await axios.get(`${BACKEND_URL}/api/${boardID}`, { withCredentials: true });
+      console.log('getmyinfo', data);
+      return data;
     } catch (error) {
       console.log(error);
     }
@@ -96,9 +109,13 @@ const Main = () => {
       return false;
     }
   };
-  getUserInfo.then((res) => {
-    console.log('res', res);
-  })
+  getUsersInfo().then((res) => {
+    // setUserInfo(res);
+  });
+  getMyInfo().then((res) => {
+    console.log(res);
+    sessionid = res.user;
+  });
   return (
     <Layout>
       <Header />
@@ -153,6 +170,7 @@ const Main = () => {
             userInfo={userInfo}
             setUserInfo={setUserInfo}
             boardID={boardID}
+            sessionid={sessionid}
           />
         : null }
       </section>
