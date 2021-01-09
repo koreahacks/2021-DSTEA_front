@@ -361,7 +361,7 @@ export class SVGDrawings {
 export class Sender {
   constructor({boardID, sessionID}) {
     console.log(boardID, sessionID);
-    this.baseURL = 'ws://49.50.167.155';
+    this.baseURL = 'ws://localhost:8000';
     this.current = {
       write: new WebSocket(`${this.baseURL}/write/${boardID}/${sessionID}/`),
     };
