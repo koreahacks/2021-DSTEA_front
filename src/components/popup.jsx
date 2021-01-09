@@ -92,6 +92,7 @@ const Layout = styled.div`
 
 
   #loading {
+    z-index: 1;
     display: inline-block;
     position: relative;
     width: 50px;
