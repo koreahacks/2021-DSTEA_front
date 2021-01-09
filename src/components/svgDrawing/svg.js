@@ -150,6 +150,7 @@ export class SVGDrawing extends Render {
 
     this.handleStart = this.handleStart.bind(this);
     this.handleDraw = this.handleDraw.bind(this);
+    this.handleTouch = this.handleTouch.bind(this);
     this.handleEnd = this.handleEnd.bind(this);
     this.throttledrawMove = throttle(this.drawMove, 20);
 
@@ -161,10 +162,17 @@ export class SVGDrawing extends Render {
       this.clearMouseListener();
       this.clearMouseListener = null;
     }
+    if (this.clearTouchListener) {
+      this.clearTouchListener();
+      this.clearTouchListener = null;
+    }
   }
   on() {
     this.off()
     this.setupMouseEventListener();
+    if ('ontouchstart' in window) {
+      this.setupTouchEventListener()
+    }
   }
 
   setupMouseEventListener() {
@@ -182,6 +190,19 @@ export class SVGDrawing extends Render {
       window.removeEventListener('mouseup', this.handleEnd)
     }
   }
+  setupTouchEventListener() {
+    this.parent.addEventListener('touchstart',this.handleStart);
+    this.parent.addEventListener('touchmove',this.handleTouch);
+    this.parent.addEventListener('touchend',this.handleEnd);
+    window.addEventListener('touchcancel', this.handleEnd);
+
+    this.clearTouchListener = () => {
+      this.parent.removeEventListener('touchstart', this.handleStart)
+      this.parent.removeEventListener('touchmove', this.handleTouch)
+      this.parent.removeEventListener('touchend', this.handleEnd)
+      window.removeEventListener('touchcancel', this.handleEnd)
+    }
+  }
   handleStart(e) {
     e.preventDefault();
     this.reSize();
@@ -190,6 +211,11 @@ export class SVGDrawing extends Render {
   handleDraw(e) {
     e.preventDefault();
     this.throttledrawMove(e.clientX, e.clientY);
+  }
+  handleTouch(e) {
+    e.preventDefault();
+    const touch = e.touches[0];
+    this.throttledrawMove(touch.clientX, touch.clientY);
   }
   handleEnd(e) {
     e.preventDefault();
