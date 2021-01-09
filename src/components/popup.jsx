@@ -77,6 +77,7 @@ const Popup = ({ children, handleFile, intro, setIntro, loadState, setLoadState 
         onDragEnter={handleDragIn}
       >
         <Content />
+        {children}
       </div>
     </Layout>
   );
