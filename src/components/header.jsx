@@ -11,6 +11,7 @@ const Wrapper = styled.header`
   font-size: 30px;
   font-weight: 400;
   color: #505050;
+  text-shadow: -1px 0 #ffffff, 0 1px #ffffff, 1px 0 #ffffff, 0 -1px #ffffff;
   font-family: 'Patrick Hand', cursive;
   z-index: 1;
 `;
