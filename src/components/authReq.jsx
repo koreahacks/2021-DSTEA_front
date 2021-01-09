@@ -38,13 +38,10 @@ const PopUpButton = styled.button`
     /* border: 1px solid #606060; */
     border: none;
     border-radius: 1px;
-<<<<<<< HEAD
-=======
     :active {
         outline: none;
         background-color: #e8e8e8;
     }
->>>>>>> 2b7219a0f077ed70c74b2667553b2ba9ee98f961
 `;
 
 const Container = styled.button`

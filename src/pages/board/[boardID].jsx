@@ -6,12 +6,13 @@ import Header from 'src/components/header';
 import LeftNav from 'src/components/leftnav';
 import PopUp from 'src/components/popup';
 import RightNav from 'src/components/rightnav';
+import axios from 'axios';
+import {BACKEND_URL, BACKEND_PORT} from 'config';
 
 const Main = () => {
   const router = useRouter();
   const { boardID } = router.query;
   const navbar = useRef();
-
   const [boardInfo, setBoardInfo] = useState({
     type: 'ppt',
     index: {
@@ -73,6 +74,9 @@ const Main = () => {
           <div className="main-wrapper">
             <PopUp handleFile={(file) => {
               alert(file[0].name);
+              axios.post(`${BACKEND_URL}:${BACKEND_PORT}/${boardID}/file_upload`, {
+                
+              });
             }}
             >
               <MainBoard
