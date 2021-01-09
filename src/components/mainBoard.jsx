@@ -6,7 +6,6 @@ const MainBoard = ({ boardInfo, penInfo }) => {
   // 차후 svgdrawing에 사용할 ref
   const board = useRef();
   const drawingRef = useRef();
-  const socketRef = useRef();
 
   useEffect(() => {
     if (drawingRef.current) return;
@@ -36,16 +35,9 @@ const MainBoard = ({ boardInfo, penInfo }) => {
   }, [boardInfo]);
   useEffect(() => {
     if (penInfo) {
-      console.log(penInfo);
       drawingRef.current.setOpt(penInfo);
     }
   }, [penInfo]);
-  React.useEffect(() => {
-    socketRef.current = new WebSocket('ws://localhost:8000');
-    socketRef.current.onmessage = (e) => {
-      console.log(e.data);
-    };
-  }, []);
   return (
     <Layout>
       <svg
