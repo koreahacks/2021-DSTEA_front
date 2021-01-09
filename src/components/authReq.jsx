@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { BACKEND_URL, BACKEND_PORT } from 'config';
 import axios from 'axios';
+import { useEffect } from 'react/cjs/react.development';
 
 const PopUp = styled.div`
     position: fixed;
@@ -67,48 +68,75 @@ const Container = styled.button`
         background-color: #e8e8e8;
     }
 `;
-
-const AuthReqPopUp = ({ nickname, id }) => {
-  const [visible, setVisible] = useState(true);
-  const onClick = () => {
-    // request something
-    // {
-    // "board": "board_id",  url에서 가져옴
-    // "user": "session_id", cookie에서 가져옴
-    // "accept": True, # False
-    // }
-    setVisible(false);
-  };
-  return (
-    visible && (
-    <PopUp index={id}>
-      <PopUpText><Bold>{nickname}</Bold> requested an authority.</PopUpText> {/* user.nickname */}
-      <PopUpButton onClick={() => onClick(true)}>Yes</PopUpButton>
-      <PopUpButton onClick={() => onClick(false)}>No</PopUpButton>
-    </PopUp>
-    )
-  );
-};
-
 const Button = ({ isAuthorized, onClick, text }) => <Container isAuthorized={isAuthorized} onClick={onClick}>{text}</Container>;
 
 const AuthReqButton = ({ isAuthorized, onClick, text }) => <Button isAuthorized={isAuthorized} onClick={onClick} text={text} />;
 
-const AuthWindow = ({ user }) => {
+const AuthWindow = ({ user, boardID, sessionid }) => {
   // const [isAdmin, setIsAdmin] = useState(user.type);
-  const [isAuthorized, setIsAuthorized] = useState(undefined);
-  const [authReqUser, setAuthReqUser] = useState({
-    users: [
-      { id: 1, nickname: 'WebKing' },
-      { id: 2, nickname: 'bbangjo' },
-    ],
-  });
-
+  // const [isAuthorized, setIsAuthorized] = useState(undefined);
+  const [authReqUser, setAuthReqUser] = useState([{}]);
+  const [ws, setWs] = useState(null);
+  const socketUrl = `ws://${BACKEND_URL}/auth/${boardID}/${sessionid}`;
+  useEffect(() => {
+    const wsClient = new WebSocket(socketUrl);
+    wsClient.onopen = () => {
+      console.log('web socket open');
+      setWs(wsClient);
+    };
+    wsClient.onclose = () => console.log('web socket close');
+    return () => {
+      wsClient.close();
+    };
+  }, []);
+  const jsonSend = (msg) => {
+    ws.send(JSON.stringify(msg));
+  };
+  useEffect(() => {
+    ws.onmessage = (e) => {
+      const msg = JSON.stringify(e.data);
+      if (msg.action === 'res') {
+        setAuthReqUser([
+          ...authReqUser,
+          {
+            session_id: sessionid,
+            nickname: user.nickname,
+          },
+        ]);
+      }
+      console.log('e', msg);
+    };
+  }, [ws]);
+  const AuthReqPopUp = ({ userr, sessionID, onClickk, id }) => {
+    const [visible, setVisible] = useState(true);
+    const onClick = (bool) => {
+      setVisible(false);
+      onClickk({ action: 'res', session_id: sessionID, nickname: userr.nickname, accept: bool });
+    };
+    return (
+      visible && (
+      <PopUp index={id}>
+        <PopUpText><Bold>{userr.nickname}</Bold> requested an authority.</PopUpText> {/* user.nickname */}
+        <PopUpButton onClick={() => onClick(true)}>Yes</PopUpButton>
+        <PopUpButton onClick={() => onClick(false)}>No</PopUpButton>
+      </PopUp>
+      )
+    );
+  };
   return (
     <>
       {
-        user.type === 'admin' ? (authReqUser.users.map((user) => <AuthReqPopUp key={user.id} id={user.id} nickname={user.nickname} />))
-          : (<AuthReqButton isAuthorized={isAuthorized} onClick={() => reqAuthority(boardID)} text={'Request Authority'} />)
+        user.type === 'admin' ? (authReqUser.users.map((userr, idx) => (
+          <AuthReqPopUp
+            key={userr.session_id}
+            sessionid={sessionid}
+            id={idx}
+            user={userr}
+            onClick={jsonSend}
+          />
+        ))
+        )
+          : (<AuthReqButton isAuthorized={isAuthorized} onClick={() => jsonSend({ action: 'req' })} text={'Request Authority'} />)
       }
     </>
   );

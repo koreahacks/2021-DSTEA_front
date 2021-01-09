@@ -63,7 +63,16 @@ const Main = () => {
   ]);
 
   const [loadState, setLoadState] = useState("waiting");
-  
+
+  const getUserInfo = async () => {
+    try {
+      const res = await axios.get(`${BACKEND_URL}/api/${boardID}`);
+      console.log('getuser', res);
+      return res;
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const fileUpload = async (file) => {
     const formData = new FormData();
     try {
@@ -87,6 +96,9 @@ const Main = () => {
       return false;
     }
   };
+  getUserInfo.then((res) => {
+    console.log('res', res);
+  })
   return (
     <Layout>
       <Header />
