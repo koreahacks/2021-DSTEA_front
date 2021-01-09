@@ -101,7 +101,7 @@ const Main = () => {
                   type: file[0].type.substring(12),
                   urls: [
                     ...res.pages.sort(),
-                  ],
+                  ].map(x => `${BACKEND_URL}/static/upload/${x}`),
                   rendering: [0, res.pages.length],
                   ...boardInfo,
                 });
