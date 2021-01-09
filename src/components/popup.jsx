@@ -11,9 +11,10 @@ const Popup = ({ children, handleFile, intro, setIntro, loadState, setLoadState 
     defaultBehavior(e);
   };
   const handleDrop = (e) => {
-    defaultBehavior(e);
     setIntro(false);
     setLoadState('loading');
+    console.log('loading');
+    defaultBehavior(e);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       handleFile(e.dataTransfer.files);
       e.dataTransfer.clearData();
@@ -38,18 +39,21 @@ const Popup = ({ children, handleFile, intro, setIntro, loadState, setLoadState 
   };
 
   const Content = () => {
-    if (loadState === 'waiting') {
+    if (intro || loadState === 'waiting') {
       return (
-        <div
-          className="popup"
-        >
-          <p align="center" className="text">
-            {'To upload file, Drag & Drop it'}
-            <br></br>
-            {'You can click the board to start without file'}
-          </p>
-          <img src="/dnd.svg" alt="Drag And Drop The File" />
-        </div>
+        <>
+          <div
+            className="popup"
+          >
+            <p align="center" className="text">
+              {'To upload file, Drag & Drop it'}
+              <br></br>
+              {'You can click the board to start without file'}
+            </p>
+            <img src="/dnd.svg" alt="Drag And Drop The File" />
+          </div>
+          <div className="popup" onDrop={handleDrop} onClick={() => setIntro(false)} />
+        </>
       );
     }
     if (loadState === 'loading') {
@@ -66,14 +70,8 @@ const Popup = ({ children, handleFile, intro, setIntro, loadState, setLoadState 
         onDragEnter={handleDragIn}
       >
 
-        {intro
-          ? (
-            <>
-              <Content />
-              <div className="popup" onDrop={handleDrop} onClick={() => setIntro(false)} />
-            </>
-          )
-          : null}
+      <Content />
+          
       </div>
     </Layout>
   );
