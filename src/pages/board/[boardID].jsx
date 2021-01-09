@@ -17,7 +17,7 @@ const Main = () => {
   const [boardInfo, setBoardInfo] = useState({
     type: 'ppt',
     index: {
-      rendering: [0, 1],
+      rendering: [0, 5],
       writing: 0,
       user: 0,
       admin: 0,
@@ -132,7 +132,7 @@ const Main = () => {
             </PopUp>
           </div>
         )}
-        {boardInfo.type === 'none' && !intro && loadState === 'complete' ? 
+        {!intro && loadState === 'complete' || boardInfo.type !== 'none' ? 
           <RightNav
             penInfo={penInfo}
             setPenInfo={setPenInfo}
