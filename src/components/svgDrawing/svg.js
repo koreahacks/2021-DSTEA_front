@@ -194,7 +194,7 @@ export class SVGDrawing extends Render {
     e.preventDefault();
     this.drawEnd();
   }
-  drawStart(pathId) {
+  drawStart(pathId, isSend = true) {
     const pathInfo = {
       fill: "none",
       ...this.opt,
@@ -208,19 +208,22 @@ export class SVGDrawing extends Render {
       this.pushPath(this.currentPaths[pathId]);
     }
 
+    if (!isSend) return;
+    const path_id = pathId === undefined || pathId === null ? this.currentPath.id : pathId;
+
     // drawing start
     this.sendSocket({
-      "status": "start",
-		  "path_id": pathId || this.currentPath.id,
-		  "is_public": true,
-		  "page": this.id,
-		  "attr" : {
+      status: "start",
+		  path_id,
+		  is_public: true,
+		  page: this.id,
+		  attr : {
 		  	...this.opt,
 	    }
 		});
   }
 
-  drawMove(x, y, pathId) {
+  drawMove(x, y, pathId, isSend = true) {
     if (!this.currentPath) return;
     const position = [x - this.left, y - this.top];
     if (pathId === undefined || pathId == null) {
@@ -230,34 +233,42 @@ export class SVGDrawing extends Render {
     }
     this.update();
 
+    if (!isSend) return;
     // drawing...
+    const path_id = pathId === undefined || pathId === null ? this.currentPath.id : pathId;
     this.sendSocket({
       status: "draw",
-		  path_id: this.currentPath.id,
+		  path_id,
 		  pos: [position[0] / this.width, position[1] / this.height],
 		});
   }
 
-  drawEnd(pathID = undefined) {
+  drawEnd(pathID = undefined, isSend) {
     if (pathID === undefined && (this.currentPath === undefined || this.currentPath === null)) return;
     else if (pathID !== undefined && this.currentPaths[pathID] === undefined) return;
-    const path_id = pathID !== undefined ? pathId : this.currentPath.id;
+    const path_id = pathID === undefined || pathID === null ? this.currentPath.id : pathID;
 
-    this.sendSocket({
-      status: "end",
-      path_id: path_id,
-      board: this.sender.boardID,
-      user: this.sender.sessionID,
-      is_public: true,
-      page: this.id,
-      attr: {
-        ...this.opt,
-        width: this.width,
-        height: this.height,
-      },
-      pos: this.currentPath.commands,
-    });
-    this.currentPath = null;
+    if (isSend) {
+      this.sendSocket({
+        status: "end",
+        path_id,
+        board: this.sender.boardID,
+        user: this.sender.sessionID,
+        is_public: true,
+        page: this.id,
+        attr: {
+          ...this.opt,
+          width: this.width,
+          height: this.height,
+        },
+        pos: this.currentPath.commands,
+      });
+    }
+    if (pathID === undefined || pathID === null) {
+      this.currentPath = null;
+    } else {
+      delete this.currentPaths[pathID];
+    }
     this.update();
   }
   sendSocket(data) {
@@ -291,11 +302,11 @@ export class SVGDrawings {
       const { status, path_id, page, pos } = data;
       if (status === 'start') {
         const { page } = data;
-        this.SVGs[page].drawStart(path_id);
+        this.SVGs[page].drawStart(path_id, false);
       } else if (status === 'draw') {
-        this.SVGs[page].drawMove(pos[0] * this.SVGs[page].width, pos[1] * this.SVGs[page].height, path_id);
+        this.SVGs[page].drawMove(pos[0] * this.SVGs[page].width, pos[1] * this.SVGs[page].height, path_id, false);
       } else if (status === 'end') {
-        this.SVGs[page].drawEnd(path_id);
+        this.SVGs[page].drawEnd(path_id, false);
       } else {
         console.log(`error on ${status}`);
       }
