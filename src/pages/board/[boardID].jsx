@@ -6,12 +6,14 @@ import Header from 'src/components/header';
 import LeftNav from 'src/components/leftnav';
 import PopUp from 'src/components/popup';
 import RightNav from 'src/components/rightnav';
+import axios from 'axios';
+import { BACKEND_URL } from 'config';
 
 const Main = () => {
   const router = useRouter();
   const { boardID } = router.query;
   const navbar = useRef();
-
+  const [intro, setIntro] = useState(true);
   const [boardInfo, setBoardInfo] = useState({
     type: 'none',
     index: {
@@ -22,13 +24,16 @@ const Main = () => {
       current: 'user',
     },
     urls: [
-      'https://picsum.photos/500/600?random=0',
-      'https://picsum.photos/500/600?random=1',
-      'https://picsum.photos/500/600?random=2',
-      'https://picsum.photos/500/600?random=3',
-      'https://picsum.photos/500/600?random=4',
+      // 'https://picsum.photos/500/600?random=0',
+      // 'https://picsum.photos/500/600?random=1',
+      // 'https://picsum.photos/500/600?random=2',
+      // 'https://picsum.photos/500/600?random=3',
+      // 'https://picsum.photos/500/600?random=4',
     ],
   });
+  React.useEffect(() => {
+    console.log(boardInfo);
+  }, [boardInfo])
   const [penInfo, setPenInfo] = useState({
     type: 'pen',
     'stroke-width': 3,
@@ -57,6 +62,31 @@ const Main = () => {
     },
   ]);
 
+  const [loadState, setLoadState] = useState("waiting");
+  
+  const fileUpload = async (file) => {
+    const formData = new FormData();
+    try {
+      const res = await axios.get(`${BACKEND_URL}/api/${boardID}/file_upload`);
+      const div = document.createElement('div');
+      div.innerHTML = res.data.trim();
+      const csrf = div.firstChild.getAttribute('value');
+
+      formData.append('file', file);
+      const {
+        data,
+      } = await axios.post(`${BACKEND_URL}/api/${boardID}/file_upload`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'X-CSRFToken': csrf,
+        },
+      }, { withCredentials: true });
+      return data;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+  };
   return (
     <Layout>
       <Header />
@@ -72,8 +102,28 @@ const Main = () => {
         ) : (
           <div className="main-wrapper">
             <PopUp handleFile={(file) => {
-              alert(file[0].name);
+              fileUpload(file[0]).then((res) => {
+                setLoadState('complete');
+                setIntro(false);
+                console.log(res);
+                setBoardInfo({
+                  ...boardInfo,
+                  type: file[0].type.substring(12),
+                  urls: res.pages.sort().map(x => `${BACKEND_URL}/static/upload/${boardID}/${x}`),
+                  index: {
+                    rendering: [0, res.pages.length],
+                    writing: 0,
+                    user: 0,
+                    admin: 0,
+                    current: 'user',
+                  },
+                });
+              }).catch((err) => console.log(err));
             }}
+            intro={intro}
+            setIntro={setIntro}
+            loadState={loadState}
+            setLoadState={setLoadState}
             >
               <MainBoard
                 boardInfo={boardInfo}
@@ -82,15 +132,17 @@ const Main = () => {
             </PopUp>
           </div>
         )}
-        <RightNav
-          penInfo={penInfo}
-          setPenInfo={setPenInfo}
-          boardInfo={boardInfo}
-          setBoardInfo={setBoardInfo}
-          userInfo={userInfo}
-          setUserInfo={setUserInfo}
-          boardID={boardID}
-        />
+        {!intro ? 
+          <RightNav
+            penInfo={penInfo}
+            setPenInfo={setPenInfo}
+            boardInfo={boardInfo}
+            setBoardInfo={setBoardInfo}
+            userInfo={userInfo}
+            setUserInfo={setUserInfo}
+            boardID={boardID}
+          />
+        : null }
       </section>
     </Layout>
   );
@@ -104,7 +156,7 @@ const Layout = styled.div`
     width: 100%;
     height: 100vh;
     .main-wrapper {
-      margin-left: 11px;
+      margin-left: 0px;
       position: relative;
       height: 100%;
       width: auto;

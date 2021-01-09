@@ -1,8 +1,7 @@
 import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 
-const Popup = ({ children, handleFile }) => {
-  const [visible, setVisible] = useState(true);
+const Popup = ({ children, handleFile, intro, setIntro, loadState, setLoadState }) => {
   const dragWrapper = useRef();
   const defaultBehavior = (e) => {
     e.preventDefault();
@@ -12,8 +11,10 @@ const Popup = ({ children, handleFile }) => {
     defaultBehavior(e);
   };
   const handleDrop = (e) => {
+    setIntro(false);
+    setLoadState('loading');
+    console.log('loading');
     defaultBehavior(e);
-    setVisible(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       handleFile(e.dataTransfer.files);
       e.dataTransfer.clearData();
@@ -21,7 +22,6 @@ const Popup = ({ children, handleFile }) => {
   };
   const handleDragOut = (e) => {
     defaultBehavior(e);
-    // setVisible(false);
     const { current } = dragWrapper;
     current.removeEventListener('dragleave', handleDragOut);
     current.removeEventListener('dragover', handleDrag);
@@ -31,12 +31,35 @@ const Popup = ({ children, handleFile }) => {
   const handleDragIn = (e) => {
     defaultBehavior(e);
     if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
-      setVisible(true);
       const { current } = dragWrapper;
       current.addEventListener('dragleave', handleDragOut);
       current.addEventListener('dragover', handleDrag);
       current.addEventListener('drop', handleDrop);
     }
+  };
+
+  const Content = () => {
+    if (intro || loadState === 'waiting') {
+      return (
+        <>
+          <div
+            className="popup"
+          >
+            <p align="center" className="text">
+              {'To upload file, Drag & Drop it'}
+              <br></br>
+              {'You can click the board to start without file'}
+            </p>
+            <img src="/dnd.svg" alt="Drag And Drop The File" />
+          </div>
+          <div className="popup" onDrop={handleDrop} onClick={() => setIntro(false)} />
+        </>
+      );
+    }
+    if (loadState === 'loading') {
+      return (<div id="loading" />);
+    }
+    return null;
   };
 
   return (
@@ -46,22 +69,9 @@ const Popup = ({ children, handleFile }) => {
         ref={dragWrapper}
         onDragEnter={handleDragIn}
       >
-        {children}
-        {visible
-          ? (
-            <>
-              <div
-                className="popup"
-              >
-                <p className="text">
-                  {'To upload file, Drag & Drop it'}
-                </p>
-                <img src="/dnd.svg" alt="Drag And Drop The File" />
-              </div>
-              <div className="popup" onDrop={handleDrop} onClick={() => setVisible(false)} />
-            </>
-          )
-          : null}
+
+      <Content />
+          
       </div>
     </Layout>
   );
@@ -71,6 +81,31 @@ const Layout = styled.div`
   height: 100%;
   width: auto;
   flex-grow: 1;
+
+  @import url(https://fonts.googleapis.com/css?family=Roboto:100);
+
+
+  #loading {
+    display: inline-block;
+    position: relative;
+    width: 50px;
+    height: 50px;
+    left: calc(50% - 25px);
+    top: calc(50% - 40px);
+    border: 5px solid #c3e7ff;
+    border-radius: 50%;
+    border-top-color: #5eb9f5;
+    animation: spin 1s ease-in-out infinite;
+    -webkit-animation: spin 1s ease-in-out infinite;
+  }
+
+  @keyframes spin {
+    to { -webkit-transform: rotate(360deg); }
+  }
+  @-webkit-keyframes spin {
+    to { -webkit-transform: rotate(360deg); }
+  }
+
   .drag-wrapper {
     position: absolute;
     top: 0px;
@@ -79,7 +114,7 @@ const Layout = styled.div`
     height: 100%;
   }
   .popup {
-    background-color: rgba(99, 99, 99, 0.25);
+    background-color: rgba(99, 99, 99, 0.1);
     position: absolute;
     top: 0px;
     width: 100%;
@@ -89,9 +124,10 @@ const Layout = styled.div`
       z-index: 1;
     }
     p {
+      font-size: 20px;
       position: absolute;
       left: 50%;
-      top: calc(50% - 30px);
+      top: calc(50% - 45px);
       transform: translate(-50%, -50%);
     }
     img {

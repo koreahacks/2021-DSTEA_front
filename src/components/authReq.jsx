@@ -38,30 +38,34 @@ const PopUpButton = styled.button`
     /* border: 1px solid #606060; */
     border: none;
     border-radius: 1px;
-<<<<<<< HEAD
-=======
     :active {
         outline: none;
         background-color: #e8e8e8;
     }
->>>>>>> 2b7219a0f077ed70c74b2667553b2ba9ee98f961
 `;
 
 const Container = styled.button`
-    border-radius: 5px;
     position: absolute;
-    bottom: 100px;
-    right: 20px;
-    border: 1px solid red;
+    bottom: 85px;
+    right: 18px;
+    padding: 5px 5px;
+    background-color: #f0f0f0; /**/
+    outline: none;
+    border: none;
     align-items: center;
     text-align: center;
+    box-shadow: rgba(0, 0, 0, 0.09) 0 6px 9px 0;
     cursor: pointer;
     ${(props) => props.isAuthorized === true && css`
-        background-color: green;
+        background-color: #86ff86;
     `};
     ${(props) => props.isAuthorized === false && css`
-        background-color: red;
+        background-color: #ff8686;
     `};
+    :active {
+        outline: none;
+        background-color: #e8e8e8;
+    }
 `;
 
 const AuthReqPopUp = ({ nickname, id }) => {
@@ -93,6 +97,12 @@ const AuthReqButton = ({ isAuthorized, onClick, text }) => <Button isAuthorized=
 const AuthWindow = ({ user }) => {
   // const [isAdmin, setIsAdmin] = useState(user.type);
   const [isAuthorized, setIsAuthorized] = useState(undefined);
+  const [authReqUser, setAuthReqUser] = useState({
+    users: [
+      { id: 1, nickname: 'WebKing' },
+      { id: 2, nickname: 'bbangjo' },
+    ],
+  });
 
   return (
     <>

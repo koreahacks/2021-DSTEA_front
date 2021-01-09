@@ -34,7 +34,8 @@ const MainBoard = ({ boardInfo, penInfo }) => {
     }
   }, [boardInfo]);
   useEffect(() => {
-    if (penInfo) {
+    if (penInfo && boardInfo) {
+      // console.log(penInfo);
       drawingRef.current.setOpt(penInfo);
     }
   }, [penInfo]);
