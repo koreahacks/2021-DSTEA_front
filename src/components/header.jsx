@@ -7,8 +7,8 @@ const Wrapper = styled.header`
   width: 150px;
   display: flex;
   align-items: center;
-  padding: 15px 15px;
-  font-size: 30px;
+  padding: 10px 15px;
+  font-size: 37px;
   font-weight: 400;
   color: #505050;
   text-shadow: -1px 0 #ffffff, 0 1px #ffffff, 1px 0 #ffffff, 0 -1px #ffffff;
