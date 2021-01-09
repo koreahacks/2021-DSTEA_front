@@ -104,6 +104,7 @@ const Main = () => {
             <PopUp handleFile={(file) => {
               fileUpload(file[0]).then((res) => {
                 setLoadState('complete');
+                setIntro(false);
                 console.log(res);
                 setBoardInfo({
                   ...boardInfo,
