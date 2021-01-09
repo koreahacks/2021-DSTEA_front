@@ -273,7 +273,7 @@ export class SVGDrawing extends Render {
   }
   sendSocket(data) {
     console.log(data);
-    this.sender.current.write.send(data);
+    this.sender.current.write.send(JSON.stringify(data));
   }
 }
 
@@ -353,7 +353,7 @@ export class Sender {
   constructor({boardID, sessionID}) {
     this.baseURL = 'ws://49.50.167.155:8001';
     this.current = {
-      write: new WebSocket(`${this.baseURL}/${boardID}/${sessionID}`),
+      write: new WebSocket(`${this.baseURL}/write/${boardID}/${sessionID}`),
       delete: new WebSocket(`${this.baseURL}/delete/`),
     };
   }
