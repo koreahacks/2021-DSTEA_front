@@ -9,13 +9,15 @@ const PopUp = styled.div`
     right: 15px;
     bottom: 100px;
     padding: 10px 10px 10px 10px;
-    border: 2px solid #606060;
-    background-color: #ffffff;
+    border: 2px solid #f4f4f4;
+    background-color: #f4f4f4;
     border-radius: 4px;
     ${(props) => props.index && css`
     z-index: ${100 - props.index};
     `};
+    box-shadow: rgba(0, 0, 0, 0.1) 0 6px 9px 0;
 `;
+
 const PopUpText = styled.div`
     height: 50px;
     color: #404040;
@@ -26,15 +28,23 @@ const PopUpText = styled.div`
 const Bold = styled.span`
     font-weight: 600;
 `;
-
+// (props) => props.on
 const PopUpButton = styled.button`
     cursor: pointer;
     position: relative;
     margin-right: 5px;
     right: -100px;
-    background-color: #f8f8f8;
-    border: 1px solid #606060;
+    background-color: #ffffff;
+    /* border: 1px solid #606060; */
+    border: none;
     border-radius: 1px;
+<<<<<<< HEAD
+=======
+    :active {
+        outline: none;
+        background-color: #e8e8e8;
+    }
+>>>>>>> 2b7219a0f077ed70c74b2667553b2ba9ee98f961
 `;
 
 const Container = styled.button`

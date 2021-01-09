@@ -31,7 +31,7 @@ const sidenav = ({ boardInfo, setBoardInfo, navbar }) => {
   };
   const setIndex = (index) => {
     const interval = (index - boardInfo.index[boardInfo.index.current] % len)
-    const writing = boardInfo.index.writing + interval;
+    const writing = boardInfo.index.writing !== null ? boardInfo.index.writing + interval : null;
     const rendering = boardInfo.index.rendering.map((i) => {
       return i + interval;
     });
@@ -46,9 +46,6 @@ const sidenav = ({ boardInfo, setBoardInfo, navbar }) => {
       },
     });
   };
-  useEffect(() => {
-    console.log(boardInfo);
-  }, [boardInfo]);
   return (
     <Layout
       style={{
@@ -80,14 +77,22 @@ const sidenav = ({ boardInfo, setBoardInfo, navbar }) => {
 
 export default sidenav;
 
+// const LEFTNAV_BORDER = '#e6f9ff';
+// const LEFTNAV_BG = '#e6f9ff';
+
+const LEFTNAV_BORDER = '#f3f3f3';
+const LEFTNAV_BG = '#f3f3f3';
+
 const Layout = styled.aside`
   position: relative;
   width: 100px;
   height: calc(100% - 120.8px);
-  margin-top: 70.8px;
+  margin-top: 73px;
   margin-bottom: 30px;
-  background-color: #f8f8f8;
+  background-color: ${LEFTNAV_BG};/*f8f8f8  e8e8e8*/
   color: #ffffff;
+
+  box-shadow: rgba(0, 0, 0, 0.09) 10px 6px 9px 0;
   
   display: flex;
   flex-direction: column;
@@ -98,8 +103,8 @@ const Layout = styled.aside`
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
-    border-top: 10px solid #e8e8e8;
-    border-bottom: 10px solid #e8e8e8;
+    border-top: 10px solid ${LEFTNAV_BORDER};
+    border-bottom: 10px solid ${LEFTNAV_BORDER};
 
 
     .thumbnail {
@@ -116,7 +121,7 @@ const Layout = styled.aside`
       }
     }
     .thumbnail.on {
-      background-color: #d0d0d0;
+      background-color: #e4e4e4;
     }
     .thumbnail.public {
       background-color: #faebd7; /*beige: f7e7ce faebd7 skyblue: 84E4F7 */
@@ -133,8 +138,10 @@ const Layout = styled.aside`
     width: 11px;
     height: 100%;
     z-index: 100;
+    box-shadow: rgba(0, 0, 0, 0.05) 6px 0px 9px 0;
+    /* border-left: 2px solid #ffffff; */
     cursor: col-resize;
-    background-color: #e8e8e8;
+    background-color: ${LEFTNAV_BORDER};
     img {
       position: absolute;
       top: 50%;

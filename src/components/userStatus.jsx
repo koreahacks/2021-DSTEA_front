@@ -15,6 +15,8 @@ const Layout = styled.div`
     top: 0px;
     width: 40px;
     height: 40px;
+    -webkit-filter: drop-shadow(3px 3px 2px rgba(0,0,0,0.09));      
+    filter: drop-shadow(3px 3px 2px rgba(0,0,0,0.09));
   }
   img:active {
     position: absolute;

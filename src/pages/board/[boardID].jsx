@@ -13,10 +13,10 @@ const Main = () => {
   const navbar = useRef();
 
   const [boardInfo, setBoardInfo] = useState({
-    type: 'none',
+    type: 'ppt',
     index: {
       rendering: [0, 5],
-      writing: 5,
+      writing: 0,
       user: 0,
       admin: 1,
       current: 'user',

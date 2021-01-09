@@ -4,14 +4,14 @@ import ColorSelector from 'src/components/colorSelector';
 import LayerChoice from 'src/components/layerChoice';
 import UserStatus from 'src/components/userStatus';
 
-const SHAPE_BORDER = '1px solid #000000';
-const BOX_BORDER = '2px solid #404040';
+const SHAPE_BORDER = '2px solid #303030';
+const BOX_BORDER = '2px solid #e4e4e4';
 const BORDER_RADIUS = '4px';
 
 const RightNav = styled.div`
   position: relative;
   width: 200px;
-  background-color: #ffffff;
+  /* background-color: #ffffff; */
 `;
 
 const PenWrapper = styled.div`
@@ -28,7 +28,8 @@ const PenBox = styled.div`
   padding: 2px;
   height: 28px;
   width: 28px;
-  background-color: #ffffff;
+  background-color: #e4e4e4;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 6px 9px 0;
   border: ${BOX_BORDER};
   border-radius: ${BORDER_RADIUS};
   cursor: pointer;
@@ -40,6 +41,7 @@ const ColorBox = styled.div`
   background-color: #ffffff;
   border: ${BOX_BORDER};
   border-radius: ${BORDER_RADIUS};
+  box-shadow: rgba(0, 0, 0, 0.1) 0 6px 9px 0;
 `;
 
 const PencilIcon = () => (
@@ -49,14 +51,14 @@ const PencilIcon = () => (
     height="24"
     viewBox="0 0 24 24"
   >
-    <path d="M7.127 22.564l-7.126 1.436 1.438-7.125 5.688 5.689zm-4.274-7.104l5.688 5.689 15.46-15.46-5.689-5.689-15.459 15.46z" />
+    <path fill = "#303030" d="M7.127 22.564l-7.126 1.436 1.438-7.125 5.688 5.689zm-4.274-7.104l5.688 5.689 15.46-15.46-5.689-5.689-15.459 15.46z" />
   </svg>
 );
 
 const CircleIcon = styled.div`
     padding: 11px;
     margin: 2px;
-    border-radius: 11px;
+    border-radius: 13px;
     border: ${SHAPE_BORDER};
     cursor: pointer;
 `;
@@ -107,7 +109,7 @@ const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo, userInfo }) =>
     {/* <AuthReq user={userInfo[0]} setUserInfo={setUserInfo} /> */}
     <LayerChoice
       boardIndex={boardInfo.index[boardInfo.index.current]}
-      renderingIndex={boardInfo.index.rendering}
+      renderIndex={boardInfo.index.rendering}
       indexLength={boardInfo.urls.length}
       boardInfo={boardInfo}
       setBoardInfo={setBoardInfo}
