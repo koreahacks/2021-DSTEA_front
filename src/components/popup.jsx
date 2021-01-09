@@ -14,7 +14,6 @@ const Popup = ({ children, handleFile, intro, setIntro, loadState, setLoadState 
     defaultBehavior(e);
     setIntro(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      // setIntro(false); - finished
       setLoadState('loading');
       handleFile(e.dataTransfer.files);
       e.dataTransfer.clearData();
@@ -22,7 +21,6 @@ const Popup = ({ children, handleFile, intro, setIntro, loadState, setLoadState 
   };
   const handleDragOut = (e) => {
     defaultBehavior(e);
-    // setVisible(false);
     const { current } = dragWrapper;
     current.removeEventListener('dragleave', handleDragOut);
     current.removeEventListener('dragover', handleDrag);
@@ -72,12 +70,7 @@ const Popup = ({ children, handleFile, intro, setIntro, loadState, setLoadState 
           ? (
             <>
               <Content />
-              {/* <div className="popup" onDrop={handleDrop} onClick={() => setIntro(false)} /> */}
-              <div className="popup" onDrop={handleDrop} onClick={() => {
-                //setIntro(false);
-                setLoadState('loading');
-              }}
-              />
+              <div className="popup" onDrop={handleDrop} onClick={() => setIntro(false)} />
             </>
           )
           : null}
