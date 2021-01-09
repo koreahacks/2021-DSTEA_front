@@ -1,19 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import MainBoard from 'src/components/mainBoard';
 import Header from 'src/components/header';
+import LeftNav from 'src/components/leftnav';
 
 import RightNav from 'src/components/rightnav';
 
 const Main = () => {
   const router = useRouter();
   const { boardID } = router.query;
+  const navbar = useRef();
+
   const [boardInfo, setBoardInfo] = useState({
     type: 'ppt',
     index: {
-      rendering: [0, 6],
-      writing: 0,
+      rendering: [0, 5],
+      writing: 5,
+      user: 0,
+      admin: 1,
+      current: 'user',
     },
     urls: [
       'https://picsum.photos/500/600?random=0',
@@ -32,9 +38,8 @@ const Main = () => {
   return (
     <Layout>
       <Header />
-      <section>
-        {/* <LeftNav></LeftNav> */}
-        {/* <MainBoard></MainBoard> */}
+      <section ref={navbar}>
+        <LeftNav boardInfo={boardInfo} setBoardInfo={setBoardInfo} navbar={navbar} />
         <div className="main-wrapper">
           <MainBoard
             boardInfo={boardInfo}
