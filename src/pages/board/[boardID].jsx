@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import MainBoard from 'src/components/mainBoard';
@@ -31,9 +31,6 @@ const Main = () => {
       'https://picsum.photos/500/600?random=4',
     ],
   });
-  React.useEffect(() => {
-    console.log(boardInfo);
-  }, [boardInfo])
   const [penInfo, setPenInfo] = useState({
     type: 'pen',
     'stroke-width': 3,
@@ -41,29 +38,68 @@ const Main = () => {
   });
 
   const [userInfo, setUserInfo] = useState([
-    {
-      username: 'ReactkingKojin',
-      type: 'admin',
-    }, {
-      username: 'BbanjowholovesJW',
-      type: 'manager',
-    }, {
-      username: 'DesignSlaveUKth',
-      type: 'guest',
-    }, {
-      username: 'ToeicKing Taeho',
-      type: 'guest',
-    }, {
-      username: 'L0Z1KtheCB_Lover',
-      type: 'guest',
-    }, {
-      username: 'ComputerInstallerHanch',
-      type: 'guest',
-    },
+  //  {
+  //    username: 'ReactkingKojin',
+  //    auth: true,
+  //  }, {
+  //    username: 'BbanjowholovesJW',
+  //    type: 'manager',
+  //  }, {
+  //    username: 'DesignSlaveUKth',
+  //    type: 'guest',
+  //  }, {
+  //    username: 'ToeicKing Taeho',
+  //    type: 'guest',
+  //  }, {
+  //    username: 'L0Z1KtheCB_Lover',
+  //    type: 'guest',
+  //  }, {
+  //    username: 'ComputerInstallerHanch',
+  //    type: 'guest',
+  //  },
   ]);
-
+  const parseCookie = (str) => str
+  .split(';')
+  .map((v) => v.split('='))
+  .reduce((acc, v) => {
+    acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(v[1].trim());
+    return acc;
+  }, {});
+  let sessionid = "";
+  let myUserInfo = {}; 
   const [loadState, setLoadState] = useState("waiting");
-  
+
+  const getUsersInfo = async () => {
+    try {
+      const {
+        data,
+      } = await axios.get(`${BACKEND_URL}/api/${boardID}/user`, { withCredentials: true });
+      console.log('getusers', data);
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getMyInfo = async () => {
+    try {
+      const {
+        data,
+      } = await axios.get(`${BACKEND_URL}/api/${boardID}`, { withCredentials: true });
+      console.log('getmyinfo', data);
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getMyInfo().then((res) => {
+      console.log(res);
+      myUserInfo = res;
+    });
+    getUsersInfo().then((res) => {
+      setUserInfo(res.nickname);
+    });
+  });
   const fileUpload = async (file) => {
     const formData = new FormData();
     try {
@@ -141,6 +177,8 @@ const Main = () => {
             userInfo={userInfo}
             setUserInfo={setUserInfo}
             boardID={boardID}
+            myInfo={myUserInfo}
+            sessionid={myUserInfo.user}
           />
         : null }
       </section>
