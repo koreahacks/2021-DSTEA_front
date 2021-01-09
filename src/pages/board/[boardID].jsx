@@ -29,6 +29,28 @@ const Main = () => {
     stroke: 'rgba(132, 228, 247, 1.0)',
   });
 
+  const [userInfo, setUserInfo] = useState([
+    {
+      username: 'ReactkingKojin',
+      type: 'admin',
+    }, {
+      username: 'Lovely Bbanjo',
+      type: 'manager',
+    }, {
+      username: 'DesignSlaveUKth',
+      type: 'guest',
+    }, {
+      username: 'ToeicKing Taeho',
+      type: 'guest',
+    }, {
+      username: 'L0Z1KtheCB_Lover',
+      type: 'guest',
+    }, {
+      username: 'ComputerInstallerHanch',
+      type: 'guest',
+    },
+  ]);
+
   return (
     <Layout>
       <Header />
@@ -44,6 +66,7 @@ const Main = () => {
         <RightNav
           penInfo={penInfo}
           setPenInfo={setPenInfo}
+          userInfo={userInfo}
         />
         {/* <RightNav></RightNav> */}
       </section>
