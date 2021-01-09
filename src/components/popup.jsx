@@ -1,8 +1,7 @@
 import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 
-const Popup = ({ children, handleFile }) => {
-  const [visible, setVisible] = useState(true);
+const Popup = ({ children, handleFile, intro, setIntro }) => {
   const dragWrapper = useRef();
   const defaultBehavior = (e) => {
     e.preventDefault();
@@ -13,7 +12,7 @@ const Popup = ({ children, handleFile }) => {
   };
   const handleDrop = (e) => {
     defaultBehavior(e);
-    setVisible(false);
+    setIntro(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       handleFile(e.dataTransfer.files);
       e.dataTransfer.clearData();
@@ -31,7 +30,7 @@ const Popup = ({ children, handleFile }) => {
   const handleDragIn = (e) => {
     defaultBehavior(e);
     if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
-      setVisible(true);
+      setIntro(true);
       const { current } = dragWrapper;
       current.addEventListener('dragleave', handleDragOut);
       current.addEventListener('dragover', handleDrag);
@@ -46,19 +45,21 @@ const Popup = ({ children, handleFile }) => {
         ref={dragWrapper}
         onDragEnter={handleDragIn}
       >
-        {children}
-        {visible
+
+        {intro
           ? (
             <>
               <div
                 className="popup"
               >
-                <p className="text">
+                <p align="center" className="text">
                   {'To upload file, Drag & Drop it'}
+                  <br></br>
+                  {'You can click the board to start without file'}
                 </p>
                 <img src="/dnd.svg" alt="Drag And Drop The File" />
               </div>
-              <div className="popup" onDrop={handleDrop} onClick={() => setVisible(false)} />
+              <div className="popup" onDrop={handleDrop} onClick={() => setIntro(false)} />
             </>
           )
           : null}
@@ -79,7 +80,7 @@ const Layout = styled.div`
     height: 100%;
   }
   .popup {
-    background-color: rgba(99, 99, 99, 0.25);
+    background-color: rgba(99, 99, 99, 0.1);
     position: absolute;
     top: 0px;
     width: 100%;
@@ -89,9 +90,10 @@ const Layout = styled.div`
       z-index: 1;
     }
     p {
+      font-size: 20px;
       position: absolute;
       left: 50%;
-      top: calc(50% - 30px);
+      top: calc(50% - 45px);
       transform: translate(-50%, -50%);
     }
     img {

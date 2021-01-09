@@ -13,6 +13,7 @@ const Main = () => {
   const router = useRouter();
   const { boardID } = router.query;
   const navbar = useRef();
+  const [intro, setIntro] = useState(true);
   const [boardInfo, setBoardInfo] = useState({
     type: 'none',
     index: {
@@ -115,6 +116,8 @@ const Main = () => {
                 });
               }).catch((err) => console.log(err));
             }}
+            intro={intro}
+            setIntro={setIntro}
             >
               <MainBoard
                 penInfo={penInfo}
@@ -122,15 +125,17 @@ const Main = () => {
             </PopUp>
           </div>
         )}
-        <RightNav
-          penInfo={penInfo}
-          setPenInfo={setPenInfo}
-          boardInfo={boardInfo}
-          setBoardInfo={setBoardInfo}
-          userInfo={userInfo}
-          setUserInfo={setUserInfo}
-          boardID={boardID}
-        />
+        {!intro ? 
+          <RightNav
+            penInfo={penInfo}
+            setPenInfo={setPenInfo}
+            boardInfo={boardInfo}
+            setBoardInfo={setBoardInfo}
+            userInfo={userInfo}
+            setUserInfo={setUserInfo}
+            boardID={boardID}
+          />
+        : null }
       </section>
     </Layout>
   );
@@ -144,7 +149,7 @@ const Layout = styled.div`
     width: 100%;
     height: 100vh;
     .main-wrapper {
-      margin-left: 11px;
+      margin-left: 0px;
       position: relative;
       height: 100%;
       width: auto;
