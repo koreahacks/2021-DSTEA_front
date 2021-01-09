@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 /* eslint-disable import/prefer-default-export */
 /**
  * @param {Number[][]} d path의 각 점의 정보 ex) [[0, 0], [10, 10], [30, 50]]
@@ -9,6 +11,11 @@ const SVG_NS = 'http://www.w3.org/2000/svg';
 export class Path {
   constructor({ d, ...attrs }) {
     this.attrs = attrs;
+    if (!Object.keys({...attrs}).includes('id')) {
+      this.id = uuidv4();
+    } else {
+      this.id = attrs.id;
+    }
     if (d) {
       this.commands = d;
     } else {
@@ -43,6 +50,7 @@ export class Path {
     const attrs = {
       ...this.attrs,
       d: this.getCommandString(),
+      id: this.id,
     }
     Object.keys(attrs)
       .sort()
@@ -85,7 +93,7 @@ class SVG {
   }
   toPaths(id) {
     const g = document.createElementNS(SVG_NS, 'g');
-    if (id) {
+    if (id !== null || id !== undefined) {
       g.setAttribute('id', String(id));
     }
     this.paths.forEach((p) => {
@@ -103,7 +111,7 @@ class SVG {
 
 class Render extends SVG {
   constructor(parent, id, opt = {}) {
-    const { width, height, left, top } = parent.getBoundingClientRect()
+    const { width, height, left, top } = parent.getBoundingClientRect();
     super({ width, height, ...opt });
     this.id = id;
     this.parent = parent;
@@ -116,12 +124,13 @@ class Render extends SVG {
     this.parent.replaceChild(this.toPaths(this.id), this.parent.getElementById(this.id));
   }
   delete() {
-    const target = this.parent.getElementById(this.id)
+    const target = this.parent.getElementById(this.id);
     if (target) {
       target.remove();
     }
   }
   create() {
+    console.log(this.toPaths(this.id));
     this.parent.appendChild(this.toPaths(this.id));
   }
   reSize() {
@@ -134,7 +143,7 @@ class Render extends SVG {
 }
 
 export class SVGDrawing extends Render {
-  constructor(parent, id, opt = {}) {
+  constructor(parent, id, opt = {}, sender) {
     super(parent, id, opt);
     this.parent = parent;
 
@@ -142,6 +151,9 @@ export class SVGDrawing extends Render {
     this.handleDraw = this.handleDraw.bind(this);
     this.handleEnd = this.handleEnd.bind(this);
     this.throttledrawMove = throttle(this.drawMove, 20);
+
+    this.sender = sender;
+    this.currentPaths = {};
   }
   off() {
     if (this.clearMouseListener) {
@@ -180,35 +192,102 @@ export class SVGDrawing extends Render {
   }
   handleEnd(e) {
     e.preventDefault();
-    this.drawEnd(e);
+    this.drawEnd();
   }
-  drawStart() {
-    this.currentPath = new Path({
+  drawStart(pathId, isSend = true) {
+    const pathInfo = {
       fill: "none",
       ...this.opt,
-    });
-    this.pushPath(this.currentPath);
+    };
+    if (pathId === undefined || pathId === null) {
+      this.currentPath = new Path(pathInfo);
+      this.pushPath(this.currentPath);
+    } else {
+      pathInfo.id = pathId;
+      this.currentPaths[pathId] = new Path(pathInfo);
+      this.pushPath(this.currentPaths[pathId]);
+    }
+
+    if (!isSend) return;
+    const path_id = pathId === undefined || pathId === null ? this.currentPath.id : pathId;
+
+    // drawing start
+    this.sendSocket({
+      status: "start",
+		  path_id,
+		  is_public: true,
+		  page: this.id,
+		  attr : {
+		  	...this.opt,
+	    }
+		});
   }
-  drawMove(x, y) {
+
+  drawMove(x, y, pathId, isSend = true) {
     if (!this.currentPath) return;
     const position = [x - this.left, y - this.top];
-    this.currentPath.pushPoint(position);
+    if (pathId === undefined || pathId == null) {
+      this.currentPath.pushPoint(position);
+    } else {
+      this.currentPaths[pathId].pushPoint(position);
+    }
+    this.update();
+
+    if (!isSend) return;
+    // drawing...
+    const path_id = pathId === undefined || pathId === null ? this.currentPath.id : pathId;
+    this.sendSocket({
+      status: "draw",
+		  path_id,
+		  pos: [position[0] / this.width, position[1] / this.height],
+		});
+  }
+
+  drawEnd(pathID = undefined, isSend) {
+    if (pathID === undefined && (this.currentPath === undefined || this.currentPath === null)) return;
+    else if (pathID !== undefined && this.currentPaths[pathID] === undefined) return;
+    const path_id = pathID === undefined || pathID === null ? this.currentPath.id : pathID;
+
+    if (isSend) {
+      this.sendSocket({
+        status: "end",
+        path_id,
+        board: this.sender.boardID,
+        user: this.sender.sessionID,
+        is_public: true,
+        page: this.id,
+        attr: {
+          ...this.opt,
+          width: this.width,
+          height: this.height,
+        },
+        pos: this.currentPath.commands,
+      });
+    }
+    if (pathID === undefined || pathID === null) {
+      this.currentPath = null;
+    } else {
+      delete this.currentPaths[pathID];
+    }
     this.update();
   }
-  drawEnd(e) {
-    this.currentPath = null;
-    this.update();
+  sendSocket(data) {
+    console.log(data);
+    this.sender.current.write.send(JSON.stringify(data));
   }
 }
 
 export class SVGDrawings {
-  constructor(parent, maxIndex, currIndexs = {'rendering': [0], 'writing': 0}, opt = {}) {
+  constructor(parent, maxIndex, currIndexs = {'rendering': [0], 'writing': 0}, opt = {}, socketOpt = {boardURL: '', sessionID: ''}) {
+    this.sender = new Sender(socketOpt);
+    // this.sender.setEvent('write', 'send');
+
     this.renderingIndexs = currIndexs['rendering'];
     this.writingIndex = currIndexs['writing'];
     this.maxIndex = maxIndex;
     this.SVGs = [];
     for (let i = 0; i < this.maxIndex; i += 1) {
-      this.SVGs.push(new SVGDrawing(parent, `index_${i}`, opt));
+      this.SVGs.push(new SVGDrawing(parent, `${i}`, opt, this.sender));
     }
 
     this.renderingIndexs.forEach((i) => {
@@ -218,10 +297,26 @@ export class SVGDrawings {
     if (this.writingIndex !== null) {
       this.SVGs[this.writingIndex].on();
     }
+    this.sender.current.write.onmessage = (e) => {
+      const data = JSON.parse(e.data);
+      const { status, path_id, page, pos } = data;
+      if (status === 'start') {
+        const { page } = data;
+        this.SVGs[page].drawStart(path_id, false);
+      } else if (status === 'draw') {
+        this.SVGs[page].drawMove(pos[0] * this.SVGs[page].width, pos[1] * this.SVGs[page].height, path_id, false);
+      } else if (status === 'end') {
+        this.SVGs[page].drawEnd(path_id, false);
+      } else {
+        console.log(`error on ${status}`);
+      }
+    };
   }
   setRenderingIndex(index) {
     const deleteIndex = this.renderingIndexs; // .filter((i) => !index.includes(i));
     const createIndex = index; // .filter((i) => !this.renderingIndexs.includes(i))
+    console.log(deleteIndex);
+    console.log(createIndex);
     deleteIndex.forEach((i) => {
       this.SVGs[i].delete();
     });
@@ -251,6 +346,22 @@ export class SVGDrawings {
   getIndex() {
     console.log('current write:', this.writingIndex);
     console.log('current render:', this.renderingIndexs);
+  }
+}
+
+export class Sender {
+  constructor({boardID, sessionID}) {
+    this.baseURL = 'ws://49.50.167.155:8001';
+    this.current = {
+      write: new WebSocket(`${this.baseURL}/write/${boardID}/${sessionID}`),
+      delete: new WebSocket(`${this.baseURL}/delete/`),
+    };
+  }
+  write(data) {
+    this.current.write.write(JSON.stringify(data));
+  }
+  setEvent(type, callbackName, callback) {
+    this.current[type][callbackName] = callback;
   }
 }
 

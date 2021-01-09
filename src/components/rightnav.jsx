@@ -109,17 +109,7 @@ const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo, userInfo }) =>
       >
         <PencilIcon />
       </PenBox>
-      <PenBox onClick={() => {
-        setPenInfo({
-          ...penInfo,
-          type: 'pen',
-          'stroke-width': 3,
-        });
-      }}
-      >
-        <PenIcon />
-      </PenBox>
-      <PenBox>
+      {/* <PenBox>
         <CircleIcon onClick={() => {
           setPenInfo({
             ...penInfo,
@@ -128,13 +118,13 @@ const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo, userInfo }) =>
           });
         }}
         />
-      </PenBox>
+      </PenBox> */}
       <PenBox>
         <RectIcon onClick={() => {
           setPenInfo({
             ...penInfo,
-            type: 'polygon',
-            'stroke-width': 7,
+            type: 'erase',
+            'stroke-width': 1,
           });
         }}
         />

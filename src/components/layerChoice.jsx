@@ -82,7 +82,7 @@ const ToggleWriteLayer = ({ writeIndex, index, onClick, text }) => {
 
 const layerChoice = ({ boardInfo, setBoardInfo }) => {
   const boardIndex = boardInfo.index[boardInfo.index.current];
-  const indexLength = boardInfo.urls.length;
+  const indexLength = boardInfo.type !== 'none' ? boardInfo.urls.length : 1;
   const renderIndex = boardInfo.index.rendering;
 
   const toggleRender = (index) => {

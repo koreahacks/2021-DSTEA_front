@@ -20,7 +20,7 @@ const Main = () => {
       rendering: [0, 1],
       writing: 0,
       user: 0,
-      admin: 1,
+      admin: 0,
       current: 'user',
     },
     urls: [
@@ -126,6 +126,7 @@ const Main = () => {
             setLoadState={setLoadState}
             >
               <MainBoard
+                boardInfo={boardInfo}
                 penInfo={penInfo}
               />
             </PopUp>

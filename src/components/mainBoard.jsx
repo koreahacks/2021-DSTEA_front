@@ -1,25 +1,32 @@
 import React, { useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import { SVGDrawings, SVGDrawing } from 'src/components/svgDrawing/svg';
+import { SVGDrawings } from 'src/components/svgDrawing/svg';
 
 const MainBoard = ({ boardInfo, penInfo }) => {
   // 차후 svgdrawing에 사용할 ref
   const board = useRef();
   const drawingRef = useRef();
+
   useEffect(() => {
     if (drawingRef.current) return;
     if (!board.current) return;
-    if (boardInfo && boardInfo.urls) {
+    if (boardInfo && boardInfo.type !== 'none') {
       drawingRef.current = new SVGDrawings(board.current, boardInfo.urls.length * 2, {
         rendering: boardInfo.index.rendering,
         writing: boardInfo.index.writing,
       }, penInfo);
     } else {
-      // drawingRef.current = new SVGDrawing(board.current, penInfo);
+      drawingRef.current = new SVGDrawings(board.current, 2, {
+        rendering: boardInfo.index.rendering,
+        writing: boardInfo.index.writing,
+      }, penInfo);
+      // drawingRef.current = new SVGDrawings(board.current, 0, penInfo, new Sender({ boardID: 'board', sessionID: 'session' }));
+      // drawingRef.current.create();
       // drawingRef.current.on();
     }
   });
   useEffect(() => {
+    // console.log(boardInfo.index);
     if (boardInfo && boardInfo.index) {
       drawingRef.current.setRenderingIndex(boardInfo.index.rendering);
       drawingRef.current.setWritingIndex(boardInfo.index.writing);
@@ -37,7 +44,7 @@ const MainBoard = ({ boardInfo, penInfo }) => {
       <svg
         ref={board}
       >
-        {boardInfo && <Background src={boardInfo.urls[boardInfo.index[boardInfo.index.current]]} />}
+        {boardInfo && boardInfo.type !== 'none' && <Background src={boardInfo.urls[boardInfo.index[boardInfo.index.current]]} />}
       </svg>
     </Layout>
   );
