@@ -263,7 +263,8 @@ export class SVGDrawing extends Render {
     this.sendSocket({
       status: "draw",
 		  path_id,
-		  pos: [position[0] / this.width, position[1] / this.height],
+      pos: [position[0] / this.width, position[1] / this.height],
+      page: this.id,
 		});
   }
 
@@ -276,6 +277,7 @@ export class SVGDrawing extends Render {
         status: "end",
         path_id,
         pos: this.currentPath.commands,
+        page: this.id,
       });
     }
     if (pathID === undefined || pathID === null) {
@@ -291,7 +293,7 @@ export class SVGDrawing extends Render {
 }
 
 export class SVGDrawings {
-  constructor(parent, maxIndex, currIndexs = {'rendering': [0], 'writing': 0}, opt = {}, socketOpt = {boardURL: '', sessionID: ''}) {
+  constructor(parent, maxIndex, currIndexs = {'rendering': [0], 'writing': 0}, opt = {}, socketOpt = {boardURL: '', sessionID: ''}, path = []) {
     this.sender = new Sender(socketOpt);
     // this.sender.setEvent('write', 'send');
 
@@ -323,6 +325,13 @@ export class SVGDrawings {
       } else {
       }
     };
+    path.forEach(({ id, page_id, color, data }) => {
+      this.SVGs[page_id].pushPath(new Path({ d: data, ...color, id }));
+      if (this.renderingIndexs.include(page_id)) {
+        this.SVGs[page_id].update();
+      }
+    });
+
   }
   setRenderingIndex(index) {
     const deleteIndex = this.renderingIndexs; // .filter((i) => !index.includes(i));

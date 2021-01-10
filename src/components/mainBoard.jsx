@@ -1,6 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import { SVGDrawings } from 'src/components/svgDrawing/svg';
+import { Path, SVGDrawings } from 'src/components/svgDrawing/svg';
+import Axios from 'axios';
+import { BACKEND_URL } from 'config';
 
 const MainBoard = ({ boardInfo, penInfo, boardID, myInfo }) => {
   // 차후 svgdrawing에 사용할 ref
@@ -13,7 +15,6 @@ const MainBoard = ({ boardInfo, penInfo, boardID, myInfo }) => {
     if (!board.current) return;
     if (myInfo === undefined) return;
     if (myInfo.user === undefined) return;
-    console.log('hello', myInfo.user, boardID);
     if (boardInfo && boardInfo.type !== 'none') {
       drawingRef.current = new SVGDrawings(board.current, boardInfo.urls.length * 2, {
         rendering: boardInfo.index.rendering,
@@ -21,7 +22,7 @@ const MainBoard = ({ boardInfo, penInfo, boardID, myInfo }) => {
       }, penInfo, {
         boardID,
         sessionID: myInfo.user,
-      });
+      }, boardInfo.path);
     } else {
       drawingRef.current = new SVGDrawings(board.current, 2, {
         rendering: boardInfo.index.rendering,
@@ -30,9 +31,6 @@ const MainBoard = ({ boardInfo, penInfo, boardID, myInfo }) => {
         boardID,
         sessionID: myInfo.user,
       });
-      // drawingRef.current = new SVGDrawings(board.current, 0, penInfo, new Sender({ boardID: 'board', sessionID: 'session' }));
-      // drawingRef.current.create();
-      // drawingRef.current.on();
     }
   });
   useEffect(() => {
@@ -41,13 +39,11 @@ const MainBoard = ({ boardInfo, penInfo, boardID, myInfo }) => {
     if (boardInfo && boardInfo.index) {
       drawingRef.current.setRenderingIndex(boardInfo.index.rendering);
       drawingRef.current.setWritingIndex(boardInfo.index.writing);
-      drawingRef.current.getIndex();
     }
   }, [boardInfo]);
   useEffect(() => {
     if (drawingRef.current === undefined) return;
     if (penInfo && boardInfo) {
-      // console.log(penInfo);
       drawingRef.current.setOpt(penInfo);
     }
   }, [penInfo]);

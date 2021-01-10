@@ -91,6 +91,30 @@ const Main = () => {
       return false;
     }
   };
+  const drawingRef = useRef();
+
+  useEffect(() => {
+    Axios.get(`https://49.50.167.155:8000/api/${boardID}`)
+      .then((res) => JSON.parse(res))
+      .then((res) => {
+        // eslint-disable-next-line camelcase
+        const type = res.page.length === 0 ? 'none' : 'ppt';
+        const len = res.page.length === 0 ? 1 : res.page.length;
+        if (setBoardInfo === null) return;
+        setBoardInfo({
+          type,
+          urls: res.page.map((p) => `${BACKEND_URL}/static/upload/${boardID}/${p.image}`),
+          index: {
+            rendering: [0, len],
+            writing: 0,
+            user: 0,
+            admin: 0,
+            current: 'user',
+          },
+          path: res.path,
+        });
+      });
+  }, []);
   return (
     <Layout>
       <Header />
