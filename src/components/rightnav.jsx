@@ -5,7 +5,6 @@ import LayerChoice from 'src/components/layerChoice';
 import UserStatus from 'src/components/userStatus';
 import AuthReq from 'src/components/authReq';
 
-
 const SHAPE_BORDER = '2px solid #303030';
 const BOX_BORDER = '2px solid #e4e4e4';
 const BORDER_RADIUS = '4px';
@@ -82,6 +81,14 @@ const PenIcon = () => (
   />
 );
 
+const DownloadIcon = () => (
+  <img
+    src="/download.svg"
+    alt="open user tab"
+    style={{ cursor: 'pointer', width: '25px', height: '25px', padding: '2px 2px' }}
+  />
+);
+
 const CircleIcon = styled.div`
     padding: 11px;
     margin: 2px;
@@ -97,8 +104,7 @@ const RectIcon = styled.div`
     cursor: pointer;
 `;
 
-const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo, userInfo, boardID, myInfo }) => {
-  return (
+const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo, userInfo, boardID, myInfo }) => (
   <RightNav>
     <PenWrapper>
       <PenBox onClick={() => {
@@ -111,16 +117,16 @@ const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo, userInfo, boar
       >
         <PencilIcon />
       </PenBox>
-      {/* <PenBox>
-        <CircleIcon onClick={() => {
+      <PenBox>
+        <PenIcon onClick={() => {
           setPenInfo({
             ...penInfo,
             type: 'circle',
-            'stroke-width': 5,
+            'stroke-width': 3,
           });
         }}
         />
-      </PenBox> */}
+      </PenBox>
       <PenBox>
         <RectIcon onClick={() => {
           setPenInfo({
@@ -132,6 +138,9 @@ const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo, userInfo, boar
         />
       </PenBox>
       <ColorBox><ColorSelector penInfo={penInfo} setPenInfo={setPenInfo} /></ColorBox>
+      <PenBox>
+        <DownloadIcon />
+      </PenBox>
     </PenWrapper>
     {/* <UserStatus></UserStatus> */}
     {(myInfo.user !== undefined) && <AuthReq user={myInfo} boardID={boardID} />}
@@ -144,6 +153,6 @@ const rightnav = ({ penInfo, setPenInfo, boardInfo, setBoardInfo, userInfo, boar
     />
     {/* <UserStatus userInfo={userInfo} /> */}
   </RightNav>
-);}
+);
 
 export default rightnav;
