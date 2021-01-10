@@ -15,6 +15,7 @@ const MainBoard = ({ boardInfo, penInfo, boardID, myInfo }) => {
     if (!board.current) return;
     if (myInfo === undefined) return;
     if (myInfo.user === undefined) return;
+    console.log(boardInfo);
     if (boardInfo && boardInfo.type !== 'none') {
       drawingRef.current = new SVGDrawings(board.current, boardInfo.urls.length * 2, {
         rendering: boardInfo.index.rendering,
@@ -22,7 +23,7 @@ const MainBoard = ({ boardInfo, penInfo, boardID, myInfo }) => {
       }, penInfo, {
         boardID,
         sessionID: myInfo.user,
-      }, boardInfo.path);
+      }, myInfo.path);
     } else {
       drawingRef.current = new SVGDrawings(board.current, 2, {
         rendering: boardInfo.index.rendering,
@@ -30,7 +31,7 @@ const MainBoard = ({ boardInfo, penInfo, boardID, myInfo }) => {
       }, penInfo, {
         boardID,
         sessionID: myInfo.user,
-      });
+      }, myInfo.path);
     }
   });
   useEffect(() => {

@@ -94,16 +94,18 @@ const Main = () => {
   const drawingRef = useRef();
 
   useEffect(() => {
-    Axios.get(`https://49.50.167.155:8000/api/${boardID}`)
-      .then((res) => JSON.parse(res))
+    if (boardID === undefined) return;
+    axios.get(`${BACKEND_URL}/api/${boardID}`)
+      .then((res) => res.data)
       .then((res) => {
         // eslint-disable-next-line camelcase
+        console.log(res.path);
         const type = res.page.length === 0 ? 'none' : 'ppt';
         const len = res.page.length === 0 ? 1 : res.page.length;
         if (setBoardInfo === null) return;
         setBoardInfo({
           type,
-          urls: res.page.map((p) => `${BACKEND_URL}/static/upload/${boardID}/${p.image}`),
+          urls: res.page.map((p) => `${BACKEND_URL}/static/upload/${boardID}/${p}`),
           index: {
             rendering: [0, len],
             writing: 0,
@@ -114,7 +116,7 @@ const Main = () => {
           path: res.path,
         });
       });
-  }, []);
+  }, [boardID]);
   return (
     <Layout>
       <Header />

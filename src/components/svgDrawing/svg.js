@@ -278,6 +278,10 @@ export class SVGDrawing extends Render {
         path_id,
         pos: this.currentPath.commands,
         page: this.id,
+        is_public: true,
+        attr : {
+          ...this.opt,
+        }
       });
     }
     if (pathID === undefined || pathID === null) {
@@ -325,13 +329,15 @@ export class SVGDrawings {
       } else {
       }
     };
+    console.log(path);
     path.forEach(({ id, page_id, color, data }) => {
-      this.SVGs[page_id].pushPath(new Path({ d: data, ...color, id }));
-      if (this.renderingIndexs.include(page_id)) {
+      const style = JSON.parse(color.replaceAll("'", '"'));
+      this.SVGs[page_id].pushPath(new Path({ d: JSON.parse(data), ...style, id }));
+      if (this.renderingIndexs.includes(page_id)) {
         this.SVGs[page_id].update();
       }
     });
-
+    console.log(this.SVGs);
   }
   setRenderingIndex(index) {
     const deleteIndex = this.renderingIndexs; // .filter((i) => !index.includes(i));
