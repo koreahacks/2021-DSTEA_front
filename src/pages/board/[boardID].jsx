@@ -55,10 +55,12 @@ const Main = () => {
     }
   };
   useEffect(() => {
-    getMyInfo().then((res) => {
-      setMyInfo(res);
-    });
-  }, []);
+    if (boardID) {
+      getMyInfo().then((res) => {
+        setMyInfo(res);
+      });        
+    }
+  }, [boardID]);
   // useEffect(() => {
   //   if (Object.keys(myInfo) > 0) {
   //     getUsersInfo().then((res) => {
@@ -138,7 +140,7 @@ const Main = () => {
             </PopUp>
           </div>
         )}
-        {!intro && loadState === 'complete' || boardInfo.type !== 'none' ? 
+        {myInfo && !intro && loadState === 'complete' || boardInfo.type !== 'none' ? 
           <RightNav
             penInfo={penInfo}
             setPenInfo={setPenInfo}

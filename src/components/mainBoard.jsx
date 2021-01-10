@@ -6,23 +6,30 @@ const MainBoard = ({ boardInfo, penInfo, boardID, myInfo }) => {
   // 차후 svgdrawing에 사용할 ref
   const board = useRef();
   const drawingRef = useRef();
+  console.log('mainboard', boardID, myInfo);
+
   useEffect(() => {
     if (drawingRef.current) return;
     if (!board.current) return;
+    if (myInfo === undefined) return;
+    if (myInfo.user === undefined) return;
+    console.log('hello', myInfo.user, boardID);
     if (boardInfo && boardInfo.type !== 'none') {
-      if (myInfo.user === undefined) return;
       drawingRef.current = new SVGDrawings(board.current, boardInfo.urls.length * 2, {
         rendering: boardInfo.index.rendering,
         writing: boardInfo.index.writing,
       }, penInfo, {
         boardID,
-        sessionID: myInfo.user ? myInfo.user : 'fuck',
+        sessionID: myInfo.user,
       });
     } else {
       drawingRef.current = new SVGDrawings(board.current, 2, {
         rendering: boardInfo.index.rendering,
         writing: boardInfo.index.writing,
-      }, penInfo);
+      }, penInfo, {
+        boardID,
+        sessionID: myInfo.user,
+      });
       // drawingRef.current = new SVGDrawings(board.current, 0, penInfo, new Sender({ boardID: 'board', sessionID: 'session' }));
       // drawingRef.current.create();
       // drawingRef.current.on();

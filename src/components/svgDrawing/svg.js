@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-
+import Axios from 'axios';
 /* eslint-disable import/prefer-default-export */
 /**
  * @param {Number[][]} d path의 각 점의 정보 ex) [[0, 0], [10, 10], [30, 50]]
@@ -361,7 +361,7 @@ export class SVGDrawings {
 export class Sender {
   constructor({boardID, sessionID}) {
     console.log(boardID, sessionID);
-    this.baseURL = 'ws://localhost:8000';
+    this.baseURL = 'ws://49.50.167.155';
     this.current = {
       write: new WebSocket(`${this.baseURL}/write/${boardID}/${sessionID}/`),
     };
